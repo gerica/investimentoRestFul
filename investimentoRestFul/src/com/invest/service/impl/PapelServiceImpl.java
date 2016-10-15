@@ -56,8 +56,8 @@ public class PapelServiceImpl implements PapelService {
 			papeisCantidatos.add(papel);
 
 		}
-		System.out.println("Antes de aplicar as regras:  " + papeis.size());
-		System.out.println("Depois de aplicar as regras: " + papeisCantidatos.size());
+		logger.info("Antes de aplicar as regras:  " + papeis.size());
+		logger.info("Depois de aplicar as regras: " + papeisCantidatos.size());
 
 		ordenarPorPL(papeisCantidatos);
 		calcularRank(papeisCantidatos);

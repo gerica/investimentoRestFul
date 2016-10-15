@@ -18,6 +18,7 @@ public class Fundamento implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
 	private Integer id;
+	
 	@Column(name = "p_l")
 	private Double p_l; // entre 1 e 30
 
