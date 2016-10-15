@@ -19,6 +19,7 @@ public class PapelRestController {
 
 	@GetMapping("/tabelaMagica")
 	public List getTabelaMagica() {
+		
 		List<Papel> papeis = null;
 		try {
 			papeis = papelService.analizarPapeis(papelService.findBySetor(SetorEnum.TODOS));
