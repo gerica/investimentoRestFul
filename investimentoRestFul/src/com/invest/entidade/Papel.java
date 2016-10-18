@@ -19,6 +19,7 @@ import javax.persistence.Transient;
 public class Papel implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
