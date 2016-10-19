@@ -1,6 +1,7 @@
-package com.invest.entidade;
+package com.invest.entidade.rendaVariavel;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,15 +12,19 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import com.invest.entidade.Fundamento;
 
 @Entity
 @Table(name = "papel")
 public class Papel implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
@@ -31,10 +36,9 @@ public class Papel implements Serializable {
 	@Column(name = "papel")
 	private String papel;
 
-	// @OneToMany(fetch = FetchType.EAGER, mappedBy = "papel", cascade = {
-	// javax.persistence.CascadeType.ALL })
-	// @OrderBy("data ASC")
-	// private Set<Cotacoes> cotacoes;
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "papel", cascade = { javax.persistence.CascadeType.ALL })
+	@OrderBy("data ASC")
+	private Set<Cotacao> cotacoes;
 
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "id_fundamento", nullable = false)
@@ -42,6 +46,9 @@ public class Papel implements Serializable {
 
 	@Column(name = "setor")
 	private Integer setor;
+
+	@Column(name = "ativo")
+	private Boolean ativo = Boolean.valueOf(true);
 
 	@Transient
 	private Integer rank = new Integer(1);
@@ -99,6 +106,22 @@ public class Papel implements Serializable {
 		this.setor = setor;
 	}
 
+	public Set<Cotacao> getCotacoes() {
+		return cotacoes;
+	}
+
+	public void setCotacoes(Set<Cotacao> cotacoes) {
+		this.cotacoes = cotacoes;
+	}
+
+	public Boolean getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(Boolean ativo) {
+		this.ativo = ativo;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -129,7 +152,5 @@ public class Papel implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
 
 }

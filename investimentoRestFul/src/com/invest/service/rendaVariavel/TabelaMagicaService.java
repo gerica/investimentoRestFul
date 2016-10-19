@@ -1,12 +1,12 @@
-package com.invest.service;
+package com.invest.service.rendaVariavel;
 
 import java.util.List;
 
-import com.invest.entidade.Papel;
 import com.invest.entidade.SetorEnum;
+import com.invest.entidade.rendaVariavel.Papel;
 import com.invest.execao.InvestimentoBusinessException;
 
-public interface PapelService {
+public interface TabelaMagicaService {
 
 	public List<Papel> analizarPapeis(List<Papel> papeis) throws InvestimentoBusinessException;
 

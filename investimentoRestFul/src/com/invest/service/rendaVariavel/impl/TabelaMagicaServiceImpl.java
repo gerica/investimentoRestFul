@@ -1,4 +1,4 @@
-package com.invest.service.impl;
+package com.invest.service.rendaVariavel.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,15 +10,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.invest.entidade.Papel;
 import com.invest.entidade.SetorEnum;
+import com.invest.entidade.rendaVariavel.Papel;
 import com.invest.execao.InvestimentoBusinessException;
-import com.invest.repository.PapelRepository;
-import com.invest.service.PapelService;
+import com.invest.repository.rendaVariavel.PapelRepository;
+import com.invest.service.rendaVariavel.TabelaMagicaService;
 
 @Service("papelService")
-public class PapelServiceImpl implements PapelService {
-	private static final Logger logger = LoggerFactory.getLogger(PapelServiceImpl.class);
+public class TabelaMagicaServiceImpl implements TabelaMagicaService {
+	private static final Logger logger = LoggerFactory.getLogger(TabelaMagicaServiceImpl.class);
 
 	@Autowired
 	private PapelRepository papelRepository;
