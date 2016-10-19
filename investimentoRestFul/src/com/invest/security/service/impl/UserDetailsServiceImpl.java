@@ -1,4 +1,4 @@
-package com.invest.security.service;
+package com.invest.security.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.invest.entidade.AppUser;
-import com.invest.repository.AppUserRepository;
 import com.invest.security.model.SpringSecurityUser;
 import com.invest.service.AppUserService;
 

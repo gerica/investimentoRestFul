@@ -8,4 +8,6 @@ public interface AppUserRepository extends CrudRepository<AppUser, Long> {
 
 	AppUser findByUsername(String username);
 
+	AppUser findByUsernameAndPassword(String username, String password);
+
 }

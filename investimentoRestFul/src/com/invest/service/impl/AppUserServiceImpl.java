@@ -16,14 +16,13 @@ public class AppUserServiceImpl implements AppUserService {
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	@Autowired
-	private AppUserRepository appUserRepository;
-
+	
 	@Override
 	@Transactional
 	public AppUser loadUserByUsername(String username) {
-		sessionFactory.getCurrentSession().createCriteria(AppUser.class).add(Restrictions.eq("username", username));
-		return appUserRepository.findByUsername(username);
+//		sessionFactory.getCurrentSession().createCriteria(AppUser.class).add(Restrictions.eq("username", username));
+		return (AppUser) sessionFactory.getCurrentSession().createCriteria(AppUser.class).add(Restrictions.eq("username", username))
+				.uniqueResult();
 	}
 
 	@Transactional

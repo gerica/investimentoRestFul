@@ -35,7 +35,7 @@ public class DatabaseConfig {
 	private static final String PROPERTY_NAME_DATABASE_PORT = "portNumber";
 	private static final String PROPERTY_NAME_DATABASE_NAME = "databaseName";
 	private static final String PROPERTY_NAME_DATABASE_PASSWORD = "password";
-	private static final String PROPERTY_NAME_DATABASE_USERNAME = "user";
+	private static final String PROPERTY_NAME_DATABASE_USERNAME = "userbd";
 	private static final String PROPERTY_NAME_HIBERNATE_DIALECT = "hibernate.dialect";
 	private static final String PROPERTY_NAME_HIBERNATE_SHOW_SQL = "hibernate.show_sql";
 	private static final String PROPERTY_NAME_HIBERNATE_AUTO = "hibernate.hbm2ddl.auto";
@@ -49,28 +49,25 @@ public class DatabaseConfig {
 
 	@Bean
 	public HikariDataSource getDataSource() {
-		// HikariDataSource dataSource = new HikariDataSource();
-
-		// dataSource.setDataSourceClassName(this.env.getRequiredProperty(PROPERTY_NAME_DATABASE_DRIVER));
-		//
-		// dataSource.addDataSourceProperty(PROPERTY_NAME_DATABASE_NAME,
-		// this.env.getRequiredProperty(PROPERTY_NAME_DATABASE_NAME));
-		// dataSource.addDataSourceProperty(PROPERTY_NAME_DATABASE_HOST,
-		// this.env.getRequiredProperty(PROPERTY_NAME_DATABASE_HOST));
-		// dataSource.addDataSourceProperty(PROPERTY_NAME_DATABASE_PORT,
-		// this.env.getRequiredProperty(PROPERTY_NAME_DATABASE_PORT));
-		// dataSource.addDataSourceProperty(PROPERTY_NAME_DATABASE_USERNAME,
-		// this.env.getRequiredProperty(PROPERTY_NAME_DATABASE_USERNAME));
-		// dataSource.addDataSourceProperty(PROPERTY_NAME_DATABASE_PASSWORD,
-		// this.env.getRequiredProperty(PROPERTY_NAME_DATABASE_PASSWORD));
 
 		HikariDataSource dataSource = new HikariDataSource();
-		dataSource.setDataSourceClassName("org.postgresql.ds.PGSimpleDataSource");
-		dataSource.addDataSourceProperty("databaseName", "investimentorestful");
-		dataSource.addDataSourceProperty("portNumber", "5433");
-		dataSource.addDataSourceProperty("serverName", "127.0.0.1");
-		dataSource.addDataSourceProperty("user", "postgres");
-		dataSource.addDataSourceProperty("password", "root");
+
+		dataSource.setDataSourceClassName(this.env.getRequiredProperty(PROPERTY_NAME_DATABASE_DRIVER));
+		dataSource.addDataSourceProperty(PROPERTY_NAME_DATABASE_NAME, this.env.getRequiredProperty(PROPERTY_NAME_DATABASE_NAME));
+		dataSource.addDataSourceProperty(PROPERTY_NAME_DATABASE_HOST, this.env.getRequiredProperty(PROPERTY_NAME_DATABASE_HOST));
+		dataSource.addDataSourceProperty(PROPERTY_NAME_DATABASE_PORT, this.env.getRequiredProperty(PROPERTY_NAME_DATABASE_PORT));
+		dataSource.addDataSourceProperty("user", this.env.getRequiredProperty(PROPERTY_NAME_DATABASE_USERNAME));
+		dataSource.addDataSourceProperty(PROPERTY_NAME_DATABASE_PASSWORD, this.env.getRequiredProperty(PROPERTY_NAME_DATABASE_PASSWORD));
+
+		// dataSource.setDataSourceClassName("org.postgresql.ds.PGSimpleDataSource");
+		// dataSource.addDataSourceProperty("databaseName",
+		// "investimentorestful");
+		// dataSource.addDataSourceProperty("portNumber", "5433");
+		// dataSource.addDataSourceProperty("serverName", "127.0.0.1");
+		System.out.println("----------------------------------> "+PROPERTY_NAME_DATABASE_USERNAME);
+		System.out.println("----------------------------------> "+this.env.getRequiredProperty(PROPERTY_NAME_DATABASE_USERNAME));
+//		 dataSource.addDataSourceProperty("user", "postgres");
+		// dataSource.addDataSourceProperty("password", "root");
 		// dataSource.addDataSourceProperty("validationQuery", "SELECT 1");
 
 		return dataSource;

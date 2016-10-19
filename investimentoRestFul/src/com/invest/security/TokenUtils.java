@@ -1,5 +1,6 @@
 package com.invest.security;
 
+import com.invest.entidade.AppUser;
 import com.invest.security.model.SpringSecurityUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -20,7 +21,7 @@ public class TokenUtils {
     private final String AUDIENCE_MOBILE = "mobile";
     private final String AUDIENCE_TABLET = "tablet";
 
-    private String secret = "sssshhhh!";
+    private String secret = "estudar";
 
     private Long expiration = 604800L;
 
@@ -86,7 +87,9 @@ public class TokenUtils {
     }
 
     private Date generateExpirationDate() {
-        return new Date(System.currentTimeMillis() + this.expiration * 1000);
+//    	System.out.println(new Date(System.currentTimeMillis() + this.expiration));
+//    	System.out.println(new Date(System.currentTimeMillis() + this.expiration * 5));
+        return new Date(System.currentTimeMillis() + this.expiration * 5);
     }
 
     private Boolean isTokenExpired(String token) {
@@ -108,7 +111,7 @@ public class TokenUtils {
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<String, Object>();
         claims.put("sub", userDetails.getUsername());
-        claims.put("audience", "web");
+        claims.put("audience", "Investimento");
         claims.put("created", this.generateCurrentDate());
         return this.generateToken(claims);
     }
@@ -148,5 +151,12 @@ public class TokenUtils {
                 && !(this.isTokenExpired(token))
                 && !(this.isCreatedBeforeLastPasswordReset(created, user.getLastPasswordReset())));
     }
+    
+    public static void main(String[] args) {
+    	SpringSecurityUser user = new SpringSecurityUser();
+		user.setUsername("rogerio");
+		TokenUtils util = new TokenUtils();
+		System.out.println(util.generateToken(user));
+	}
 
 }
