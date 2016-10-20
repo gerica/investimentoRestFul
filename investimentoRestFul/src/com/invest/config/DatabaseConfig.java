@@ -17,7 +17,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.invest.entidade.AppUser;
+import com.invest.entidade.Usuario;
 import com.zaxxer.hikari.HikariDataSource;
 
 /**
@@ -64,9 +64,9 @@ public class DatabaseConfig {
 		// "investimentorestful");
 		// dataSource.addDataSourceProperty("portNumber", "5433");
 		// dataSource.addDataSourceProperty("serverName", "127.0.0.1");
-		System.out.println("----------------------------------> "+PROPERTY_NAME_DATABASE_USERNAME);
-		System.out.println("----------------------------------> "+this.env.getRequiredProperty(PROPERTY_NAME_DATABASE_USERNAME));
-//		 dataSource.addDataSourceProperty("user", "postgres");
+		System.out.println("----------------------------------> " + PROPERTY_NAME_DATABASE_USERNAME);
+		System.out.println("----------------------------------> " + this.env.getRequiredProperty(PROPERTY_NAME_DATABASE_USERNAME));
+		// dataSource.addDataSourceProperty("user", "postgres");
 		// dataSource.addDataSourceProperty("password", "root");
 		// dataSource.addDataSourceProperty("validationQuery", "SELECT 1");
 
@@ -85,27 +85,11 @@ public class DatabaseConfig {
 	public LocalSessionFactoryBean hibernate5SessionFactoryBean() {
 		LocalSessionFactoryBean localSessionFactoryBean = new LocalSessionFactoryBean();
 		localSessionFactoryBean.setDataSource(appContext.getBean(HikariDataSource.class));
-		localSessionFactoryBean.setAnnotatedClasses(AppUser.class);
+		localSessionFactoryBean.setAnnotatedClasses(Usuario.class);
 
 		localSessionFactoryBean.setHibernateProperties(hibProperties());
 		return localSessionFactoryBean;
 	}
-
-	// @Bean
-	// public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-	//
-	// LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new
-	// LocalContainerEntityManagerFactoryBean();
-	// entityManagerFactoryBean.setDataSource(getDataSource());
-	// //
-	// entityManagerFactoryBean.setPersistenceProviderClass(HibernatePersistence.class);
-	// entityManagerFactoryBean.setPackagesToScan(new String[] {
-	// PROPERTY_NAME_ENTITYMANAGER_PACKAGES_TO_SCAN });
-	//
-	// entityManagerFactoryBean.setJpaProperties(hibProperties());
-	//
-	// return entityManagerFactoryBean;
-	// }
 
 	@Bean
 	public EntityManagerFactory entityManagerFactory() {

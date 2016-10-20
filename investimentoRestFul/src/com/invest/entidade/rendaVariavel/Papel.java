@@ -17,8 +17,6 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import com.invest.entidade.Fundamento;
-
 @Entity
 @Table(name = "papel")
 public class Papel implements Serializable {

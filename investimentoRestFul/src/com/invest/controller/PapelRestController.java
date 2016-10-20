@@ -9,8 +9,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.invest.entidade.SetorEnum;
 import com.invest.entidade.rendaVariavel.Papel;
+import com.invest.entidade.rendaVariavel.SetorEnum;
 import com.invest.execao.InvestimentoBusinessException;
 import com.invest.service.rendaVariavel.TabelaMagicaService;
 
@@ -22,11 +22,11 @@ public class PapelRestController {
 	private TabelaMagicaService papelService;
 
 	@GetMapping("/tabelaMagica")
-//	@RequestMapping(method = RequestMethod.GET)
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+	// @RequestMapping(method = RequestMethod.GET)
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	public List getTabelaMagica() {
 		logger.info("PapelRestController.getTabelaMagica()");
-		
+
 		List<Papel> papeis = null;
 		try {
 			papeis = papelService.analizarPapeis(papelService.findBySetor(SetorEnum.TODOS));

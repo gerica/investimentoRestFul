@@ -1,4 +1,4 @@
-package com.invest.entidade;
+package com.invest.entidade.rendaVariavel;
 
 import java.io.Serializable;
 

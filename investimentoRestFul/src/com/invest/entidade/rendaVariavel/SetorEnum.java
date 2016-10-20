@@ -1,4 +1,4 @@
-package com.invest.entidade;
+package com.invest.entidade.rendaVariavel;
 
 public enum SetorEnum {
 	TODOS("TODOS", 0), //

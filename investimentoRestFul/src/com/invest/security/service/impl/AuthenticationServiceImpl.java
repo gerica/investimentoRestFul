@@ -14,9 +14,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-import com.invest.entidade.AppUser;
+import com.invest.entidade.Usuario;
 import com.invest.execao.InvestimentoBusinessException;
-import com.invest.repository.AppUserRepository;
+import com.invest.repository.UsuarioRepository;
 import com.invest.security.TokenUtils;
 import com.invest.security.model.SpringSecurityUser;
 import com.invest.security.service.AuthenticationService;
@@ -34,12 +34,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	private UserDetailsService userDetailsService;
 
 	@Autowired
-	private AppUserRepository appUserRepository;
+	private UsuarioRepository appUserRepository;
 
 	@Override
 	public String authentication(String username, String password) throws AuthenticationException, InvestimentoBusinessException {
 
-		AppUser userBD = getAppUserBD(username, password);
+		Usuario userBD = getAppUserBD(username, password);
 
 		// Perform the authentication
 		Authentication authentication = this.authenticationManager
@@ -65,15 +65,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		}
 	}
 
-	private AppUser getAppUserBD(String username, String password) throws InvestimentoBusinessException {
-		AppUser userBD = appUserRepository.findByUsername(username);
+	private Usuario getAppUserBD(String username, String password) throws InvestimentoBusinessException {
+		Usuario userBD = appUserRepository.findByUsername(username);
 		if (userBD == null) {
 			throw new InvestimentoBusinessException("Usuário não cadastrado");
 		}
-//		String passwordEncode = getPasswordEnconding(password);
-//		if (!passwordEncode.equals(userBD.getPassword())) {
-//			throw new InvestimentoBusinessException("Senha incorreta.");
-//		}
+		String passwordEncode = getPasswordEnconding(password);
+		if (!passwordEncode.equals(userBD.getPassword())) {
+			throw new InvestimentoBusinessException("Senha incorreta.");
+		}
 		return userBD;
 	}
 

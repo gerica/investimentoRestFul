@@ -20,13 +20,13 @@ public class Usuario implements Serializable {
 	private Long id;
 
 	@Column(name = "nome")
-	private String nome;
+	private String username;
 
 	@Column(name = "email")
 	private String email;
 
 	@Column(name = "senha")
-	private String senha;
+	private String password;
 
 	@Column(name = "authorities")
 	private String authorities;
@@ -39,33 +39,12 @@ public class Usuario implements Serializable {
 		this.id = id;
 	}
 
-	public String getSenha() {
-		return senha;
-	}
-
-	public void setSenha(String senha) {
-		this.senha = senha;
-	}
-
 	public String getEmail() {
 		return email;
 	}
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	@Override
-	public String toString() {
-		return "Usuario [id=" + id + ", nome=" + nome + ", email=" + email + ", senha=" + senha + "]";
 	}
 
 	public String getAuthorities() {
@@ -75,5 +54,29 @@ public class Usuario implements Serializable {
 	public void setAuthorities(String authorities) {
 		this.authorities = authorities;
 	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	@Override
+	public String toString() {
+		return "Usuario [id=" + id + ", username=" + username + ", email=" + email + ", password=" + password + ", authorities="
+				+ authorities + "]";
+	}
+	
+	
 
 }

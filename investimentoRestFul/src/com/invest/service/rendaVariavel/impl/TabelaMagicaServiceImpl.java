@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.invest.entidade.SetorEnum;
 import com.invest.entidade.rendaVariavel.Papel;
+import com.invest.entidade.rendaVariavel.SetorEnum;
 import com.invest.execao.InvestimentoBusinessException;
 import com.invest.repository.rendaVariavel.PapelRepository;
 import com.invest.service.rendaVariavel.TabelaMagicaService;
