@@ -31,8 +31,12 @@ public class PapelServiceImpl implements PapelService {
 	@Autowired
 	private OperacaoEntradaService operacaoEntradaService;
 
-	/* (non-Javadoc)
-	 * @see com.invest.service.rendaVariavel.PapelService#salvar(com.invest.entidade.rendaVariavel.Papel)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.invest.service.rendaVariavel.PapelService#salvar(com.invest.entidade.
+	 * rendaVariavel.Papel)
 	 */
 	@Override
 	public void salvar(Papel papel) throws InvestimentoBusinessException {
@@ -41,15 +45,19 @@ public class PapelServiceImpl implements PapelService {
 		this.papelRepository.save(papel);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.invest.service.rendaVariavel.PapelService#findAll()
 	 */
 	@Override
 	public List<Papel> findAll() {
-		return this.papelRepository.findAll();
+		return this.papelRepository.findAllOrderByPapel();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.invest.service.rendaVariavel.PapelService#findAllByAtivo()
 	 */
 	@Override
@@ -57,15 +65,20 @@ public class PapelServiceImpl implements PapelService {
 		return this.papelRepository.findAllByAtivo(Boolean.valueOf(true));
 	}
 
-	/* (non-Javadoc)
-	 * @see com.invest.service.rendaVariavel.PapelService#findById(java.lang.Integer)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.invest.service.rendaVariavel.PapelService#findById(java.lang.Integer)
 	 */
 	@Override
 	public Papel findById(Integer idPapel) {
 		return this.papelRepository.findById(idPapel);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.invest.service.rendaVariavel.PapelService#findBalancoHoje()
 	 */
 	@Override
@@ -93,8 +106,11 @@ public class PapelServiceImpl implements PapelService {
 	}
 
 	// @Scheduled(cron = "0 0 20 * * ?")
-	/* (non-Javadoc)
-	 * @see com.invest.service.rendaVariavel.PapelService#schedulerAtualizarCotacao()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.invest.service.rendaVariavel.PapelService#schedulerAtualizarCotacao()
 	 */
 	@Override
 	public void schedulerAtualizarCotacao() throws InvestimentoBusinessException {
@@ -110,8 +126,11 @@ public class PapelServiceImpl implements PapelService {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.invest.service.rendaVariavel.PapelService#inativar(java.lang.Integer)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.invest.service.rendaVariavel.PapelService#inativar(java.lang.Integer)
 	 */
 	@Override
 	public Papel inativar(Integer idPapel) throws InvestimentoBusinessException {

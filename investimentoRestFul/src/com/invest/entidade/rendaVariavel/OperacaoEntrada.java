@@ -210,4 +210,13 @@ public class OperacaoEntrada {
 	public void setPrecoUnitario(Double precoUnitario) {
 		this.precoUnitario = precoUnitario;
 	}
+
+	@Override
+	public String toString() {
+		return "OperacaoEntrada [id=" + id + ", papel=" + papel + ", data=" + data + ", tipoOperacao=" + tipoOperacao + ", precoUnitario="
+				+ precoUnitario + ", despesa=" + despesa + ", quantidade=" + quantidade + ", stopLoss=" + stopLoss + ", stopWin=" + stopWin
+				+ ", podeRemover=" + podeRemover + ", avaliacaoEntrada=" + avaliacaoEntrada + ", observacao=" + observacao + ", ativo="
+				+ ativo + "]";
+	}
+
 }

@@ -12,6 +12,4 @@ public interface TabelaMagicaService {
 
 	public List<Papel> findBySetor(SetorEnum setor) throws InvestimentoBusinessException;
 
-//	public List<Papel> findAll() throws FundamentoBusinessException;
-
 }
