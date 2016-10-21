@@ -2,8 +2,6 @@ package com.invest.config;
 
 import java.util.Properties;
 
-import javax.persistence.EntityManagerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -11,8 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -59,26 +57,8 @@ public class DatabaseConfig {
 		dataSource.addDataSourceProperty("user", this.env.getRequiredProperty(PROPERTY_NAME_DATABASE_USERNAME));
 		dataSource.addDataSourceProperty(PROPERTY_NAME_DATABASE_PASSWORD, this.env.getRequiredProperty(PROPERTY_NAME_DATABASE_PASSWORD));
 
-		// dataSource.setDataSourceClassName("org.postgresql.ds.PGSimpleDataSource");
-		// dataSource.addDataSourceProperty("databaseName",
-		// "investimentorestful");
-		// dataSource.addDataSourceProperty("portNumber", "5433");
-		// dataSource.addDataSourceProperty("serverName", "127.0.0.1");
-		System.out.println("----------------------------------> " + PROPERTY_NAME_DATABASE_USERNAME);
-		System.out.println("----------------------------------> " + this.env.getRequiredProperty(PROPERTY_NAME_DATABASE_USERNAME));
-		// dataSource.addDataSourceProperty("user", "postgres");
-		// dataSource.addDataSourceProperty("password", "root");
-		// dataSource.addDataSourceProperty("validationQuery", "SELECT 1");
-
 		return dataSource;
 
-	}
-
-	@Bean
-	public HibernateTransactionManager transactionManager() {
-		HibernateTransactionManager manager = new HibernateTransactionManager();
-		manager.setSessionFactory(hibernate5SessionFactoryBean().getObject());
-		return manager;
 	}
 
 	@Bean(name = "sessionFactory")
@@ -92,7 +72,7 @@ public class DatabaseConfig {
 	}
 
 	@Bean
-	public EntityManagerFactory entityManagerFactory() {
+	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 
 		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		vendorAdapter.setGenerateDdl(true);
@@ -105,7 +85,14 @@ public class DatabaseConfig {
 
 		factory.afterPropertiesSet();
 
-		return factory.getObject();
+		return factory;
+	}
+
+	@Bean
+	public JpaTransactionManager transactionManager() {
+		JpaTransactionManager transactionManager = new JpaTransactionManager();
+		transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
+		return transactionManager;
 	}
 
 	private Properties hibProperties() {

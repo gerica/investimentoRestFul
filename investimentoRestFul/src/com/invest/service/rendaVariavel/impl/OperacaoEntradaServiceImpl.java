@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.invest.entidade.rendaVariavel.Cotacao;
 import com.invest.entidade.rendaVariavel.OperacaoEntrada;
@@ -25,7 +26,9 @@ import com.invest.service.rendaVariavel.dto.HistoricoRendaVariavelDTO;
 
 @Service
 public class OperacaoEntradaServiceImpl implements OperacaoEntradaService {
+	
 	private static final Logger logger = LoggerFactory.getLogger(OperacaoEntradaServiceImpl.class);
+	
 	@Autowired
 	private OperacaoEntradaRepository operacaoEntradaRepository;
 	@Autowired
@@ -43,6 +46,7 @@ public class OperacaoEntradaServiceImpl implements OperacaoEntradaService {
 	 * invest.entidade.rendaVariavel.OperacaoEntrada)
 	 */
 	@Override
+//	@Transactional
 	public void salvar(OperacaoEntrada operacao) throws InvestimentoBusinessException {
 		logger.info("OperacaoEntradaServiceImpl.salvar()");
 

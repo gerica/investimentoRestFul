@@ -5,27 +5,36 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.invest.entidade.Usuario;
-import com.invest.security.model.SpringSecurityUser;
+import com.invest.security.service.AuthenticationService;
 import com.invest.service.UsuarioService;
 
 @Service(value = "userDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
+	// @Autowired
+	// private UsuarioService usuarioService;
+
 	@Autowired
-	private UsuarioService usuarioService;
+	private AuthenticationService authenticationService;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Usuario appUser = this.usuarioService.loadUserByUsername(username);
+		Usuario usuario = this.authenticationService.loadUserByUsername(username);
 
-		if (appUser == null) {
-			throw new UsernameNotFoundException(String.format("No appUser found with username '%s'.", username));
+		if (usuario == null) {
+			throw new UsernameNotFoundException(String.format("Nenhum usuário com esse nome '%s'.", username));
 		} else {
-			return new SpringSecurityUser(appUser.getId(), appUser.getUsername(), appUser.getPassword(), null, null,
-					AuthorityUtils.commaSeparatedStringToAuthorityList(appUser.getAuthorities()));
+			// usuario.setPassword(usuario.getSenha());
+			PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+			usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+			usuario.setAuthorities(AuthorityUtils.commaSeparatedStringToAuthorityList(usuario.getAuthoritiesBd()));
+			return usuario;
+
 		}
 	}
 

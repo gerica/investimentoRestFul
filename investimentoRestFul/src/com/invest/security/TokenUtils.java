@@ -7,7 +7,7 @@ import java.util.Map;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import com.invest.security.model.SpringSecurityUser;
+import com.invest.entidade.Usuario;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -137,19 +137,12 @@ public class TokenUtils {
 	}
 
 	public Boolean validateToken(String token, UserDetails userDetails) {
-		SpringSecurityUser user = (SpringSecurityUser) userDetails;
+		Usuario user = (Usuario) userDetails;
 		final String username = this.getUsernameFromToken(token);
 		final Date created = this.getCreatedDateFromToken(token);
 		final Date expiration = this.getExpirationDateFromToken(token);
 		return (username.equals(user.getUsername()) && !(this.isTokenExpired(token))
 				&& !(this.isCreatedBeforeLastPasswordReset(created, user.getLastPasswordReset())));
-	}
-
-	public static void main(String[] args) {
-		SpringSecurityUser user = new SpringSecurityUser();
-		user.setUsername("rogerio");
-		TokenUtils util = new TokenUtils();
-		System.out.println(util.generateToken(user));
 	}
 
 }
