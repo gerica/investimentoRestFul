@@ -26,9 +26,9 @@ import com.invest.service.rendaVariavel.dto.HistoricoRendaVariavelDTO;
 
 @Service
 public class OperacaoEntradaServiceImpl implements OperacaoEntradaService {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(OperacaoEntradaServiceImpl.class);
-	
+
 	@Autowired
 	private OperacaoEntradaRepository operacaoEntradaRepository;
 	@Autowired
@@ -46,10 +46,14 @@ public class OperacaoEntradaServiceImpl implements OperacaoEntradaService {
 	 * invest.entidade.rendaVariavel.OperacaoEntrada)
 	 */
 	@Override
-//	@Transactional
+	// @Transactional
 	public void salvar(OperacaoEntrada operacao) throws InvestimentoBusinessException {
 		logger.info("OperacaoEntradaServiceImpl.salvar()");
 
+		if (operacao.getQuantidade() == null || operacao.getQuantidade() == 0) {
+			throw new InvestimentoBusinessException("A quantidade é obrigatório.");
+		}
+		
 		Papel papel = this.papelService.findById(operacao.getPapel().getId());
 		CotacaoTendenciaDTO cotacaoTendencia = this.cotacaoService.getUltimoValorTendencia(papel);
 		if (cotacaoTendencia != null) {
