@@ -1,6 +1,7 @@
 package com.invest.controller;
 
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +67,15 @@ public class OperacaoRestController {
 		operacao.setPapel(papel);
 
 		return new ResponseEntity<OperacaoEntrada>(operacao, HttpStatus.OK);
+	}
 
+	@RequestMapping(method = RequestMethod.GET, value = "getAllOperacaoEntrada")
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+	@ResponseBody
+	public List<OperacaoEntrada> getAllOperacaoEntrada() {
+		logger.info("OperacaoRestController.getAllOperacaoEntrada()");
+
+		return entradaService.findAllOperacaoAtiva();
 	}
 
 }

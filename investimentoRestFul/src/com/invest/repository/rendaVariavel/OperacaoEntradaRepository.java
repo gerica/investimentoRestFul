@@ -17,4 +17,5 @@ public abstract interface OperacaoEntradaRepository extends CrudRepository<Opera
 	public abstract List<OperacaoEntrada> findByDataLessThanEqualAndDataGreaterThanEqual(Date paramDate1, Date paramDate2);
 
 	public abstract List<OperacaoEntrada> findByDataLessThanEqualAndAtivo(Date paramDate, boolean paramBoolean);
+	
 }
