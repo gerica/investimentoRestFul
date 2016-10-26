@@ -14,26 +14,26 @@ import javax.persistence.Transient;
 import com.invest.entidade.Usuario;
 
 @Entity
-@Table(name = "configuracao_analise_cotacoes")
+@Table(name = "tb_configuracao_analise_cotacoes")
 public class ConfiguracaoAnaliseCotacoes {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id")
+	@Column(name = "id_configuracao_analise_cotacoes")
 	private Integer id;
 
-	@Column(name = "qtd_dias_apresentar_cotacoes")
+	@Column(name = "nr_qtd_dias_apresentar_cotacoes")
 	private Integer qtdDiasApresentarCotacoes;
 
-	@Column(name = "risco_stop_loss")
+	@Column(name = "nr_risco_stop_loss")
 	private Integer riscoStopLoss;
 
-	@Column(name = "risco_stop_win")
+	@Column(name = "nr_risco_stop_win")
 	private Integer riscoStopWin;
 
-	@Column(name = "qtd_dias_calculo_stop_loss")
+	@Column(name = "nr_qtd_dias_calculo_stop_loss")
 	private Integer qtdDiasCalculoStopLoss;
 
-	@Column(name = "qtd_dias_calculo_stop_win")
+	@Column(name = "nr_qtd_dias_calculo_stop_win")
 	private Integer qtdDiasCalculoStopWin;
 
 	@ManyToOne(fetch = FetchType.EAGER)

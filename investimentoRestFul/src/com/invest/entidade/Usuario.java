@@ -18,7 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "usuario")
+@Table(name = "tb_usuario")
 public class Usuario implements Serializable, UserDetails {
 
 	private static final long serialVersionUID = 1L;
@@ -29,19 +29,19 @@ public class Usuario implements Serializable, UserDetails {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id")
+	@Column(name = "id_usuario")
 	private Long id;
 
-	@Column(name = "nome")
+	@Column(name = "ds_nome")
 	private String username;
 
-	@Column(name = "email")
+	@Column(name = "ds_email")
 	private String email;
 
-	@Column(name = "senha")
+	@Column(name = "ds_senha")
 	private String password;
 
-	@Column(name = "authorities")
+	@Column(name = "ds_authorities")
 	private String authoritiesBd;
 
 	@Transient

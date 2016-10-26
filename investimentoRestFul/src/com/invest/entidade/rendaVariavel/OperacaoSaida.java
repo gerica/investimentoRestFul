@@ -14,42 +14,42 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name = "operacao_saida")
+@Table(name = "tb_operacao_saida")
 public class OperacaoSaida {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id")
+	@Column(name = "id_operacao_saida")
 	private Integer id;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_operacao_entrada", nullable = false)
 	private OperacaoEntrada operacaoEntrada;
 
-	@Column(name = "data")
+	@Column(name = "dt_operacao_saida")
 	// @NotNull(message="A data n�o pode ser em branco!")
 	// @JsonSerialize(using=CustomDateSerializer.class)
 	// @JsonDeserialize(using=CustomDateDeserializer.class)
 	private Date data;
 
-	@Column(name = "preco_unitario")
+	@Column(name = "nr_preco_unitario")
 	// @NotNull(message="O valor do pre�o unit�rio n�o pode ser em branco!")
 	private Double precoUnitario;
 
-	@Column(name = "despesa")
+	@Column(name = "nr_despesa")
 	// @NotNull(message="O valor da despesa n�o pode ser em branco!")
 	private Double despesa;
 
-	@Column(name = "observacao")
+	@Column(name = "ds_observacao")
 	// @NotEmpty(message="O valor da observa��o n�o pode ser em branco!")
 	private String observacao;
 
-	@Column(name = "avaliacao_saida")
+	@Column(name = "nr_avaliacao_saida")
 	private Double avaliacaoSaida;
 
-	@Column(name = "ativo")
+	@Column(name = "in_ativo")
 	private Boolean ativo = Boolean.valueOf(true);
 
-	@Column(name = "quantidade")
+	@Column(name = "nr_quantidade")
 	// @NotNull(message="O valor da quantidade n�o pode ser em branco!")
 	private Integer quantidade;
 

@@ -10,37 +10,37 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "fundamento")
+@Table(name = "tb_fundamento")
 public class Fundamento implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id")
+	@Column(name = "id_funcamento")
 	private Integer id;
 	
-	@Column(name = "p_l")
+	@Column(name = "nr_p_l")
 	private Double p_l; // entre 1 e 30
 
-	@Column(name = "p_vp")
+	@Column(name = "nr_p_vp")
 	private Double p_vp; // entre 0 e 20
 
-	@Column(name = "dividentoYIELD")
+	@Column(name = "nr_dividentoYIELD")
 	private Double dividentoYIELD; // maior que 0
 
-	@Column(name = "margemEBIT")
+	@Column(name = "nr_margemEBIT")
 	private Double margemEBIT; // TER� QUE SER >0
 
-	@Column(name = "liquidezCorrete")
+	@Column(name = "nr_liquidezCorrete")
 	private Double liquidezCorrete; // maior que 1
 
-	@Column(name = "roe")
+	@Column(name = "nr_roe")
 	private Double roe; // maior que 0%
 
-	@Column(name = "liquidez2Meses")
+	@Column(name = "nr_liquidez2Meses")
 	private Double liquidez2Meses; // maior que 100.000
 
-	@Column(name = "crescimento")
+	@Column(name = "nr_crescimento")
 	private Double crescimento; // maior que 5%
 
 	@Override

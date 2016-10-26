@@ -138,5 +138,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		}
 		return hexString.toString();
 	}
+	
+	public static void main(String[] args) {
+		AuthenticationServiceImpl a = new AuthenticationServiceImpl();
+		try {
+			System.out.println(a.getPasswordEnconding("cardoso"));
+		} catch (InvestimentoBusinessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 
 }

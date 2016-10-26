@@ -13,33 +13,33 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="cotacao")
+@Table(name="tb_cotacao")
 public class Cotacao
 {
   @Id
   @GeneratedValue(strategy=GenerationType.AUTO)
-  @Column(name="id")
+  @Column(name="id_cotacao")
   private Integer id;
   
-  @Column(name="data")
+  @Column(name="dt_cotacao")
 //  @NotNull(message="A data n�o pode ser em branco!")
 //  @JsonSerialize(using=CustomDateSerializer.class)
 //  @JsonDeserialize(using=CustomDateDeserializer.class)
   private Date data;
   
-  @Column(name="abertura")
+  @Column(name="nr_abertura")
 //  @NotNull(message="O valor de abertura n�o pode ser em branco!")
   private Double abertura;
   
-  @Column(name="maxima")
+  @Column(name="nr_maxima")
 //  @NotNull(message="O valor m�ximo n�o pode ser em branco!")
   private Double maxima;
   
-  @Column(name="minima")
+  @Column(name="nr_minima")
 //  @NotNull(message="O valor m�nimo n�o pode ser em branco!")
   private Double minima;
   
-  @Column(name="fechamento")
+  @Column(name="nr_fechamento")
 //  @NotNull(message="O valor de fechamento n�o pode ser em branco!")
   private Double fechamento;
   

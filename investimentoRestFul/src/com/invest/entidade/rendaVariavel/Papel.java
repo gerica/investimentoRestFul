@@ -18,20 +18,20 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name = "papel")
+@Table(name = "tb_papel")
 public class Papel implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id")
+	@Column(name = "id_papel")
 	private Integer id;
 
-	@Column(name = "nome")
+	@Column(name = "ds_nome")
 	private String nome;
 
-	@Column(name = "papel")
+	@Column(name = "ds_sigla_papel")
 	private String papel;
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "papel", cascade = { javax.persistence.CascadeType.ALL })
@@ -42,10 +42,10 @@ public class Papel implements Serializable {
 	@JoinColumn(name = "id_fundamento", nullable = false)
 	private Fundamento fundamento;
 
-	@Column(name = "setor")
+	@Column(name = "nr_setor")
 	private Integer setor;
 
-	@Column(name = "ativo")
+	@Column(name = "in_ativo")
 	private Boolean ativo = Boolean.valueOf(true);
 
 	@Transient
