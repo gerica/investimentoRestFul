@@ -9,14 +9,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import com.invest.entidade.Usuario;
 import com.invest.entidade.rendaVariavel.Cotacao;
 import com.invest.entidade.rendaVariavel.OperacaoEntrada;
 import com.invest.entidade.rendaVariavel.OperacaoSaida;
 import com.invest.entidade.rendaVariavel.Papel;
 import com.invest.execao.InvestimentoBusinessException;
 import com.invest.repository.rendaVariavel.OperacaoEntradaRepository;
+import com.invest.security.service.AuthenticationService;
+import com.invest.service.UsuarioOperacaoService;
 import com.invest.service.rendaVariavel.CotacaoService;
 import com.invest.service.rendaVariavel.OperacaoEntradaService;
 import com.invest.service.rendaVariavel.OperacaoSaidaService;
@@ -31,12 +33,21 @@ public class OperacaoEntradaServiceImpl implements OperacaoEntradaService {
 
 	@Autowired
 	private OperacaoEntradaRepository operacaoEntradaRepository;
+
 	@Autowired
 	private CotacaoService cotacaoService;
+
 	@Autowired
 	private PapelService papelService;
+
 	@Autowired
 	private OperacaoSaidaService operacaoSaidaService;
+
+	@Autowired
+	private AuthenticationService authenticationService;
+
+	@Autowired
+	private UsuarioOperacaoService usuarioOperacaoService;
 
 	/*
 	 * (non-Javadoc)
@@ -53,13 +64,16 @@ public class OperacaoEntradaServiceImpl implements OperacaoEntradaService {
 		if (operacao.getQuantidade() == null || operacao.getQuantidade() == 0) {
 			throw new InvestimentoBusinessException("A quantidade é obrigatório.");
 		}
-		
+
 		Papel papel = this.papelService.findById(operacao.getPapel().getId());
 		CotacaoTendenciaDTO cotacaoTendencia = this.cotacaoService.getUltimoValorTendencia(papel);
 		if (cotacaoTendencia != null) {
 			operacao.setStopLoss(cotacaoTendencia.getStop());
 		}
 		this.operacaoEntradaRepository.save(operacao);
+		Usuario usuario = authenticationService.get();
+		usuarioOperacaoService.salvar(operacao, usuario);
+
 	}
 
 	/*
@@ -104,7 +118,8 @@ public class OperacaoEntradaServiceImpl implements OperacaoEntradaService {
 	}
 
 	private void avaliarEntradaCompra(OperacaoEntrada operacaoEntrada) throws InvestimentoBusinessException {
-		if ((operacaoEntrada.getAvaliacaoEntrada() != null) && (operacaoEntrada.getAvaliacaoEntrada().doubleValue() > 0.0D)) {
+		if ((operacaoEntrada.getAvaliacaoEntrada() != null)
+				&& (operacaoEntrada.getAvaliacaoEntrada().doubleValue() > 0.0D)) {
 			throw new InvestimentoBusinessException("A avalia��o j� foi realizada para esse papel. ");
 		}
 		Cotacao cotacao = this.cotacaoService.findByDataAndPapel(operacaoEntrada.getData(), operacaoEntrada.getPapel());

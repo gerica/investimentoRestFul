@@ -30,7 +30,7 @@ public class OperacaoRestController {
 	@Autowired
 	private OperacaoEntradaService entradaService;
 
-	@RequestMapping(method = RequestMethod.POST, value = "salvarOperacao")
+	@RequestMapping(method = RequestMethod.POST, value = UriConstInvestimento.URI_SALVAR_OPERACAO)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@ResponseBody
 	public ResponseEntity<? extends AbstractResponse> salvarOperacao(@RequestBody OperacaoEntrada operacao) {
@@ -48,7 +48,7 @@ public class OperacaoRestController {
 
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "getOperacao")
+	@RequestMapping(method = RequestMethod.GET, value = UriConstInvestimento.URI_RECUPERAR_OPERACAO_ENTRADA)
 	// @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@ResponseBody
 	public ResponseEntity<OperacaoEntrada> getOperacao() {
@@ -69,7 +69,7 @@ public class OperacaoRestController {
 		return new ResponseEntity<OperacaoEntrada>(operacao, HttpStatus.OK);
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "getAllOperacaoEntrada")
+	@RequestMapping(method = RequestMethod.GET, value = UriConstInvestimento.URI_RECUPERAR_TODAS_OPERACAO_ENTRADA)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@ResponseBody
 	public List<OperacaoEntrada> getAllOperacaoEntrada() {

@@ -1,8 +1,6 @@
 package com.invest.security.service.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import javax.servlet.http.HttpServletRequest;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -20,8 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.invest.entidade.Usuario;
 import com.invest.execao.InvestimentoBusinessException;
 import com.invest.repository.UsuarioRepository;
+import com.invest.security.AppConstant;
 import com.invest.security.TokenUtils;
 import com.invest.security.service.AuthenticationService;
+import com.invest.service.UsuarioService;
 
 @Service(value = "authenticationService")
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -41,13 +41,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	@Autowired
 	private SessionFactory sessionFactory;
 
+	@Autowired(required = true)
+	private HttpServletRequest request;
+
+	@Autowired
+	private UsuarioService usuarioService;
+
 	@Override
 	@Transactional
 	public Usuario loadUserByUsername(String username) {
 		// sessionFactory.getCurrentSession().createCriteria(AppUser.class).add(Restrictions.eq("username",
 		// username));
-		return (Usuario) sessionFactory.getCurrentSession().createCriteria(Usuario.class).add(Restrictions.eq("username", username))
-				.uniqueResult();
+		return (Usuario) sessionFactory.getCurrentSession().createCriteria(Usuario.class)
+				.add(Restrictions.eq("username", username)).uniqueResult();
 	}
 
 	@Transactional
@@ -60,6 +66,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	@Override
 	public Usuario get(long id) {
 		return (Usuario) sessionFactory.getCurrentSession().get(Usuario.class, id);
+	}
+
+	@Transactional
+	@Override
+	public Usuario get() {
+		HttpServletRequest httpRequest = (HttpServletRequest) request;
+		String authToken = httpRequest.getHeader(AppConstant.tokenHeader);
+		String username = this.tokenUtils.getUsernameFromToken(authToken);
+
+		sessionFactory.getCurrentSession().get(Usuario.class, username);
+
+		return loadUserByUsername(username);
 	}
 
 	@Transactional
@@ -77,7 +95,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	@Override
-	public String authentication(String username, String password) throws AuthenticationException, InvestimentoBusinessException {
+	public String authentication(String username, String password)
+			throws AuthenticationException, InvestimentoBusinessException {
 
 		Usuario userBD = getAppUserBD(username, password);
 
@@ -110,44 +129,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		if (userBD == null) {
 			throw new InvestimentoBusinessException("Usuário não cadastrado com esse nome: " + username);
 		}
-		String passwordEncode = getPasswordEnconding(password);
+		String passwordEncode = usuarioService.getPasswordEnconding(password);
 		if (!passwordEncode.equals(userBD.getPassword())) {
 			throw new InvestimentoBusinessException("Senha incorreta.");
 		}
 		return userBD;
-	}
-
-	private String getPasswordEnconding(String password) throws InvestimentoBusinessException {
-
-		MessageDigest algorithm = null;
-		byte messageDigest[] = null;
-		try {
-			algorithm = MessageDigest.getInstance("SHA-256");
-			messageDigest = algorithm.digest(password.getBytes("UTF-8"));
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-			throw new InvestimentoBusinessException(e.getMessage());
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			throw new InvestimentoBusinessException(e.getMessage());
-		}
-
-		StringBuilder hexString = new StringBuilder();
-		for (byte b : messageDigest) {
-			hexString.append(String.format("%02X", 0xFF & b));
-		}
-		return hexString.toString();
-	}
-	
-	public static void main(String[] args) {
-		AuthenticationServiceImpl a = new AuthenticationServiceImpl();
-		try {
-			System.out.println(a.getPasswordEnconding("cardoso"));
-		} catch (InvestimentoBusinessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 	}
 
 }

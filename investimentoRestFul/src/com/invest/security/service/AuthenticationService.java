@@ -16,6 +16,8 @@ public interface AuthenticationService {
 	long post(Usuario usuario);
 
 	Usuario get(long id);
+	
+	Usuario get();
 
 	Usuario patch(Usuario usuario);
 

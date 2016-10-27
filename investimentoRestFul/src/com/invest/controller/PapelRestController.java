@@ -26,8 +26,7 @@ public class PapelRestController {
 	@Autowired
 	private PapelService papelService;
 
-	@GetMapping("/tabelaMagica")
-	// @RequestMapping(method = RequestMethod.GET)
+	@GetMapping(UriConstInvestimento.URI_TABELA_MAGICA)
 	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 	@ResponseBody
 	public List<Papel> getTabelaMagica() {
