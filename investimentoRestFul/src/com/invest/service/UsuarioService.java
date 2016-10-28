@@ -9,4 +9,6 @@ public interface UsuarioService {
 
 	String getPasswordEnconding(String password) throws InvestimentoBusinessException;
 
+	Usuario findByEmail(String email) throws InvestimentoBusinessException;
+
 }

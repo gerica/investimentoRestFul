@@ -3,6 +3,8 @@ package com.invest.controller;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.invest.controller.dto.AbstractResponse;
 import com.invest.controller.dto.ErrorResponse;
 import com.invest.controller.dto.SuccessResponse;
+import com.invest.entidade.permissao.RoleEnum;
 import com.invest.entidade.rendaVariavel.OperacaoEntrada;
 import com.invest.entidade.rendaVariavel.Papel;
 import com.invest.execao.InvestimentoBusinessException;
@@ -31,7 +34,8 @@ public class OperacaoRestController {
 	private OperacaoEntradaService entradaService;
 
 	@RequestMapping(method = RequestMethod.POST, value = UriConstInvestimento.URI_SALVAR_OPERACAO)
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+//	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+	@RolesAllowed({ RoleEnum.Constants.ROLE_ADMIN, RoleEnum.Constants.ROLE_CONVIDADO })
 	@ResponseBody
 	public ResponseEntity<? extends AbstractResponse> salvarOperacao(@RequestBody OperacaoEntrada operacao) {
 		logger.info("OperacaoRestController.salvarOperacao()");

@@ -95,10 +95,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	@Override
-	public String authentication(String username, String password)
+	public String authentication(String email, String password)
 			throws AuthenticationException, InvestimentoBusinessException {
 
-		Usuario userBD = getAppUserBD(username, password);
+		Usuario userBD = getAppUserBD(email, password);
 
 		// Perform the authentication
 		Authentication authentication = this.authenticationManager
@@ -124,10 +124,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		}
 	}
 
-	private Usuario getAppUserBD(String username, String password) throws InvestimentoBusinessException {
-		Usuario userBD = appUserRepository.findByUsername(username);
+	private Usuario getAppUserBD(String email, String password) throws InvestimentoBusinessException {
+		Usuario userBD = appUserRepository.findByEmail(email.toUpperCase());
 		if (userBD == null) {
-			throw new InvestimentoBusinessException("Usuário não cadastrado com esse nome: " + username);
+			throw new InvestimentoBusinessException("Usuário não cadastrado com esse email: " + email);
 		}
 		String passwordEncode = usuarioService.getPasswordEnconding(password);
 		if (!passwordEncode.equals(userBD.getPassword())) {
