@@ -22,7 +22,9 @@ public interface PapelService {
 	void schedulerAtualizarCotacao() throws InvestimentoBusinessException;
 
 	Papel inativar(Integer idPapel) throws InvestimentoBusinessException;
-	
+
 	Papel ativar(Integer idPapel) throws InvestimentoBusinessException;
+
+	void ativarDesativar(Integer idPapel) throws InvestimentoBusinessException;
 
 }

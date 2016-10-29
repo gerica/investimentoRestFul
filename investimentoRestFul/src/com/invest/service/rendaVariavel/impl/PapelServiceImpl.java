@@ -41,7 +41,7 @@ public class PapelServiceImpl implements PapelService {
 	@Override
 	public void salvar(Papel papel) throws InvestimentoBusinessException {
 		logger.debug("salvar");
-		this.validar(papel);
+//		this.validar(papel);
 		this.papelRepository.save(papel);
 	}
 
@@ -146,6 +146,13 @@ public class PapelServiceImpl implements PapelService {
 		papel.setAtivo(Boolean.valueOf(true));
 		this.salvar(papel);
 		return papel;
+	}
+	
+	@Override
+	public void ativarDesativar(Integer idPapel) throws InvestimentoBusinessException {
+		Papel papel = this.papelRepository.findById(idPapel);
+		papel.setAtivo(!papel.getAtivo());
+		this.salvar(papel);
 	}
 
 	private Double calcularSaldo(OperacaoEntrada entrada, Cotacao cotacao) {

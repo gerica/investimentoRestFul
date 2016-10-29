@@ -7,6 +7,9 @@ public abstract class UriConstInvestimento {
 	
 	// Functionalidades para os PAPEIS
 	public static final String URI_TABELA_MAGICA = "/tabelaMagica";
+	public static final String URI_ATIVAR_DESATIVAR_PAPEL = "ativarDesativarPapel";
+	public static final String URI_RECUPERAR_PAPEIS_ATIVO = "recuperarPapeisAtivo";
+	public static final String URI_RECUPERAR_TODOS_PAPEIS = "recuperarTodosPapeis";
 
 	// Functionalidades para USUÁRIOS
 	public static final String URI_REGISTRAR_USUARIO = "/registrarUsuario";

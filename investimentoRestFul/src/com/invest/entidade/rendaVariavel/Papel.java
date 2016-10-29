@@ -17,6 +17,8 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "tb_papel")
 public class Papel implements Serializable {
@@ -34,11 +36,13 @@ public class Papel implements Serializable {
 	@Column(name = "ds_sigla_papel")
 	private String papel;
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "papel", cascade = { javax.persistence.CascadeType.ALL })
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "papel", cascade = { javax.persistence.CascadeType.ALL })
+	@JsonIgnore
 	@OrderBy("data ASC")
 	private Set<Cotacao> cotacoes;
 
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JsonIgnore
 	@JoinColumn(name = "id_fundamento", nullable = false)
 	private Fundamento fundamento;
 
@@ -89,11 +93,6 @@ public class Papel implements Serializable {
 
 	public void setFundamento(Fundamento fundamento) {
 		this.fundamento = fundamento;
-	}
-
-	@Override
-	public String toString() {
-		return "Papel [id=" + id + ", nome=" + nome + ", papel=" + papel + ", fundamento=" + fundamento + ", rank=" + rank + "]";
 	}
 
 	public Integer getSetor() {
@@ -149,6 +148,12 @@ public class Papel implements Serializable {
 		} else if (!papel.equals(other.papel))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Papel [id=" + id + ", nome=" + nome + ", papel=" + papel + ", setor=" + setor + ", ativo=" + ativo
+				+ ", rank=" + rank + "]";
 	}
 
 }
