@@ -140,6 +140,14 @@ public class PapelServiceImpl implements PapelService {
 		return papel;
 	}
 
+	@Override
+	public Papel ativar(Integer idPapel) throws InvestimentoBusinessException {
+		Papel papel = this.papelRepository.findById(idPapel);
+		papel.setAtivo(Boolean.valueOf(true));
+		this.salvar(papel);
+		return papel;
+	}
+
 	private Double calcularSaldo(OperacaoEntrada entrada, Cotacao cotacao) {
 		return (double) entrada.getQuantidade().intValue() * cotacao.getFechamento();
 	}

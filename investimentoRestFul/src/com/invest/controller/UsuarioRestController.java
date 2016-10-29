@@ -1,6 +1,7 @@
 package com.invest.controller;
 
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ import com.invest.controller.dto.AbstractResponse;
 import com.invest.controller.dto.ErrorResponse;
 import com.invest.controller.dto.SuccessResponse;
 import com.invest.entidade.Usuario;
+import com.invest.entidade.permissao.RoleEnum;
 import com.invest.execao.InvestimentoBusinessException;
 import com.invest.service.UsuarioService;
 
@@ -41,6 +43,24 @@ public class UsuarioRestController {
 		}
 
 		SuccessResponse success = new SuccessResponse("Operação realizada com sucesso");
+		return new ResponseEntity<SuccessResponse>(success, HttpStatus.OK);
+
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = UriConstInvestimento.URI_ALTERAR_USUARIO)
+	@RolesAllowed({ RoleEnum.Constants.ROLE_ADMIN, RoleEnum.Constants.ROLE_CONVIDADO })
+	@ResponseBody
+	public ResponseEntity<?> alterarUsuario(@RequestBody Usuario usuario) {
+		logger.info("UsuarioRestController.alterarUsuario()");
+
+		try {
+			usuario = usuarioService.alterar(usuario);
+		} catch (InvestimentoBusinessException e) {
+			ErrorResponse error = new ErrorResponse(e.getMessage());
+			return new ResponseEntity<ErrorResponse>(error, HttpStatus.BAD_REQUEST);
+		}
+
+		SuccessResponse success = new SuccessResponse("Operação realizada com sucesso", usuario);
 		return new ResponseEntity<SuccessResponse>(success, HttpStatus.OK);
 
 	}

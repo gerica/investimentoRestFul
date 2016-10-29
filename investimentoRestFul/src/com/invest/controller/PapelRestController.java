@@ -49,7 +49,7 @@ public class PapelRestController {
 	public List<Papel> getAllPapel() {
 		logger.info("PapelRestController.getAllPapel()");
 
-		List<Papel> papeis = papelService.findAll();
+		List<Papel> papeis = papelService.findAllByAtivo();
 
 		return papeis;
 	}

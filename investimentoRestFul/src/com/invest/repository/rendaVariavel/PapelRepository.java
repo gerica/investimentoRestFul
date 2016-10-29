@@ -15,6 +15,7 @@ public interface PapelRepository extends CrudRepository<Papel, Integer> {
 
 	Papel findById(Integer paramInteger);
 
+//	@Query("SELECT p FROM Papel p WHERE p.ativo = ?1 ORDER BY p.papel asc")
 	List<Papel> findAllByAtivo(Boolean paramBoolean);
 
 	List<Papel> findBySetor(Integer setor);

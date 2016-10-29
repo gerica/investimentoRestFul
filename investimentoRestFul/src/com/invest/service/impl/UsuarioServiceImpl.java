@@ -34,6 +34,19 @@ public class UsuarioServiceImpl implements UsuarioService {
 	}
 
 	@Override
+	public Usuario alterar(Usuario userParam) throws InvestimentoBusinessException {
+		validarEmail(userParam);
+		validarSenha(userParam);
+		Usuario usuario = verificarTrocaEmail(userParam);
+
+		usuario.setUsername(userParam.getUsername());
+		usuario.setPassword(getPasswordEnconding(userParam.getPassword()));
+		usuarioRepository.save(usuario);
+		return usuario;
+
+	}
+
+	@Override
 	public Usuario findByEmail(String email) throws InvestimentoBusinessException {
 		if (email == null || "".equals(email)) {
 			throw new InvestimentoBusinessException("O emial não pode ser nulo, nem vazio.");
@@ -82,12 +95,13 @@ public class UsuarioServiceImpl implements UsuarioService {
 
 	}
 
-	private void verificarDuplicidade(Usuario usuario) throws InvestimentoBusinessException {
+	private Usuario verificarDuplicidade(Usuario usuario) throws InvestimentoBusinessException {
 		Usuario userDb = findByEmail(usuario.getEmail());
 		if (userDb != null) {
 			throw new InvestimentoBusinessException(
 					"O email informado já existe cadastrado. Por favor informe outro email.");
 		}
+		return userDb;
 
 	}
 
@@ -95,6 +109,18 @@ public class UsuarioServiceImpl implements UsuarioService {
 		if (usuario.getPassword() == null || usuario.getPassword().length() <= 4) {
 			throw new InvestimentoBusinessException("Informe uma senha com no mínimo 5 caracteres.");
 		}
+
+	}
+
+	private Usuario verificarTrocaEmail(Usuario userParam) throws InvestimentoBusinessException {
+		Usuario usuario = findByEmail(userParam.getEmail());
+		if (usuario == null) {
+			throw new InvestimentoBusinessException("Não foi possível recuperar o usuário com esse email. Contacte o administrador.");
+		}
+		if (!usuario.getEmail().equals(userParam.getEmail())) {
+			throw new InvestimentoBusinessException("Não é possível alterar o email.");
+		}
+		return usuario;
 
 	}
 

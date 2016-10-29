@@ -7,6 +7,8 @@ public interface UsuarioService {
 
 	void registar(Usuario usuario) throws InvestimentoBusinessException;
 
+	Usuario alterar(Usuario usuario) throws InvestimentoBusinessException;
+
 	String getPasswordEnconding(String password) throws InvestimentoBusinessException;
 
 	Usuario findByEmail(String email) throws InvestimentoBusinessException;

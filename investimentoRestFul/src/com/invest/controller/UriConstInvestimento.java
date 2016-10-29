@@ -10,6 +10,7 @@ public abstract class UriConstInvestimento {
 
 	// Functionalidades para USUÁRIOS
 	public static final String URI_REGISTRAR_USUARIO = "/registrarUsuario";
+	public static final String URI_ALTERAR_USUARIO = "/alterarUsuario";
 
 	// Funcionalidades para OPERAÇÃO
 	public static final String URI_SALVAR_OPERACAO = "/salvarOperacao";
