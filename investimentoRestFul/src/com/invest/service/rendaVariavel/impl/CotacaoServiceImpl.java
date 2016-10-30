@@ -43,8 +43,13 @@ public class CotacaoServiceImpl implements CotacaoService {
 	private ConfiguracaoAnaliseCotacoesService analiseCotacoesService;
 
 	/* Error */
-	/* (non-Javadoc)
-	 * @see com.invest.service.rendaVariavel.impl.CotacaoService#cadastrarCotacao(org.springframework.web.multipart.MultipartFile, com.invest.entidade.rendaVariavel.Cotacao)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.invest.service.rendaVariavel.impl.CotacaoService#cadastrarCotacao(org
+	 * .springframework.web.multipart.MultipartFile,
+	 * com.invest.entidade.rendaVariavel.Cotacao)
 	 */
 	@Override
 	public void cadastrarCotacao(org.springframework.web.multipart.MultipartFile file, Cotacao cotacaoTela)
@@ -107,19 +112,26 @@ public class CotacaoServiceImpl implements CotacaoService {
 		logger.debug("Cota��o esta sem data");
 	}
 
-	/* (non-Javadoc)
-	 * @see com.invest.service.rendaVariavel.impl.CotacaoService#findAllByPapelOrderByDataDesc(com.invest.entidade.rendaVariavel.Papel)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.invest.service.rendaVariavel.impl.CotacaoService#
+	 * findAllByPapelOrderByDataDesc(com.invest.entidade.rendaVariavel.Papel)
 	 */
 	@Override
 	public List<Cotacao> findAllByPapelOrderByDataDesc(Papel papel) {
 		return this.cotacaoRepository.findAllByPapelOrderByDataDesc(papel);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.invest.service.rendaVariavel.impl.CotacaoService#analizarAltaStopLoss(com.invest.entidade.rendaVariavel.Papel)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.invest.service.rendaVariavel.impl.CotacaoService#analizarAltaStopLoss
+	 * (com.invest.entidade.rendaVariavel.Papel)
 	 */
 	@Override
-	public List<CotacaoTendenciaDTO> analizarAltaStopLoss(Papel papel) {
+	public List<CotacaoTendenciaDTO> analizarAltaStopLoss(Papel papel) throws InvestimentoBusinessException {
 		ConfiguracaoAnaliseCotacoes configuracao = this.analiseCotacoesService.findByUsuario();
 		List<CotacaoTendenciaDTO> tendencias = new ArrayList<CotacaoTendenciaDTO>();
 		List<Cotacao> cotacoes = this.cotacaoRepository.findAllByPapelOrderByDataAsc(papel);
@@ -145,16 +157,21 @@ public class CotacaoServiceImpl implements CotacaoService {
 				cotacaoTendencia.setValorProtegido(alta.calcularValorProtegidoLoss(tendencias, indice));
 			}
 			alta.ordernarByDataDesc(tendencias);
-			tendencias = alta.reduzierQuantidadeCotacao(tendencias, configuracao.getQtdDiasApresentarCotacoes().intValue());
+			tendencias = alta.reduzierQuantidadeCotacao(tendencias,
+					configuracao.getQtdDiasApresentarCotacoes().intValue());
 		}
 		return tendencias;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.invest.service.rendaVariavel.impl.CotacaoService#analizarAltaStopWin(com.invest.entidade.rendaVariavel.Papel)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.invest.service.rendaVariavel.impl.CotacaoService#analizarAltaStopWin(
+	 * com.invest.entidade.rendaVariavel.Papel)
 	 */
 	@Override
-	public List<CotacaoTendenciaDTO> analizarAltaStopWin(Papel papel) {
+	public List<CotacaoTendenciaDTO> analizarAltaStopWin(Papel papel) throws InvestimentoBusinessException {
 		ConfiguracaoAnaliseCotacoes configuracao = this.analiseCotacoesService.findByUsuario();
 		List<CotacaoTendenciaDTO> tendencias = new ArrayList<CotacaoTendenciaDTO>();
 		List<Cotacao> cotacoes = this.cotacaoRepository.findAllByPapelOrderByDataAsc(papel);
@@ -162,7 +179,8 @@ public class CotacaoServiceImpl implements CotacaoService {
 			LinkedList<Cotacao> cotacaoTemp = new LinkedList();
 
 			int indice = 0;
-			CalcularTendenciaAlta alta = new CalcularTendenciaAlta(configuracao.getQtdDiasCalculoStopWin(), configuracao.getRiscoStopWin());
+			CalcularTendenciaAlta alta = new CalcularTendenciaAlta(configuracao.getQtdDiasCalculoStopWin(),
+					configuracao.getRiscoStopWin());
 			for (Cotacao cotacao : cotacoes) {
 				CotacaoTendenciaDTO cotacaoTendencia = new CotacaoTendenciaDTO();
 				cotacaoTemp.add(cotacao);
@@ -179,16 +197,19 @@ public class CotacaoServiceImpl implements CotacaoService {
 				cotacaoTendencia.setValorProtegido(alta.calcularValorProtegidoWin(tendencias, indice));
 			}
 			alta.ordernarByDataDesc(tendencias);
-			tendencias = alta.reduzierQuantidadeCotacao(tendencias, configuracao.getQtdDiasApresentarCotacoes().intValue());
+			tendencias = alta.reduzierQuantidadeCotacao(tendencias,
+					configuracao.getQtdDiasApresentarCotacoes().intValue());
 		}
 		return tendencias;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.invest.service.rendaVariavel.impl.CotacaoService#getUltimoValorTendencia(com.invest.entidade.rendaVariavel.Papel)
+	/*
+	 * 
+	 * @see com.invest.service.rendaVariavel.impl.CotacaoService#
+	 * getUltimoValorTendencia(com.invest.entidade.rendaVariavel.Papel)
 	 */
 	@Override
-	public CotacaoTendenciaDTO getUltimoValorTendencia(Papel papel) {
+	public CotacaoTendenciaDTO getUltimoValorTendencia(Papel papel) throws InvestimentoBusinessException {
 		List<CotacaoTendenciaDTO> list = analizarAltaStopLoss(papel);
 		if (!list.isEmpty()) {
 			return (CotacaoTendenciaDTO) list.iterator().next();
@@ -260,24 +281,26 @@ public class CotacaoServiceImpl implements CotacaoService {
 		}
 
 		private Double calcularMediaRupturas(CotacaoTendenciaDTO cotacaoTendencia) {
-			if ((cotacaoTendencia.getSoma().doubleValue() > 0.0D) && (cotacaoTendencia.getNumeroRupturas().intValue() > 0)) {
-				return Double.valueOf(cotacaoTendencia.getSoma().doubleValue() / cotacaoTendencia.getNumeroRupturas().intValue());
+			if ((cotacaoTendencia.getSoma().doubleValue() > 0.0D)
+					&& (cotacaoTendencia.getNumeroRupturas().intValue() > 0)) {
+				return Double.valueOf(
+						cotacaoTendencia.getSoma().doubleValue() / cotacaoTendencia.getNumeroRupturas().intValue());
 			}
 			return Double.valueOf(0.0D);
 		}
 
 		private Double calcularStopLoss(CotacaoTendenciaDTO cotacaoTendencia, Cotacao cotacao) {
 			if (cotacaoTendencia.getMediaRupturas().doubleValue() > 0.0D) {
-				return Double.valueOf(
-						cotacao.getMinima().doubleValue() - cotacaoTendencia.getMediaRupturas().doubleValue() * this.risco.intValue());
+				return Double.valueOf(cotacao.getMinima().doubleValue()
+						- cotacaoTendencia.getMediaRupturas().doubleValue() * this.risco.intValue());
 			}
 			return Double.valueOf(0.0D);
 		}
 
 		private Double calcularStopWin(CotacaoTendenciaDTO cotacaoTendencia, Cotacao cotacao) {
 			if (cotacaoTendencia.getMediaRupturas().doubleValue() > 0.0D) {
-				return Double.valueOf(
-						cotacao.getMaxima().doubleValue() + cotacaoTendencia.getMediaRupturas().doubleValue() * this.risco.intValue());
+				return Double.valueOf(cotacao.getMaxima().doubleValue()
+						+ cotacaoTendencia.getMediaRupturas().doubleValue() * this.risco.intValue());
 			}
 			return Double.valueOf(0.0D);
 		}
@@ -291,7 +314,8 @@ public class CotacaoServiceImpl implements CotacaoService {
 					CotacaoTendenciaDTO primeiro = (CotacaoTendenciaDTO) tendencias.get(i - 2);
 					if ((primeiro.getStop().doubleValue() > 0.0D) && (segundo.getStop().doubleValue() > 0.0D)
 							&& (terceiro.getStop().doubleValue() > 0.0D)) {
-						Double initMax = Double.valueOf(Math.max(primeiro.getStop().doubleValue(), segundo.getStop().doubleValue()));
+						Double initMax = Double
+								.valueOf(Math.max(primeiro.getStop().doubleValue(), segundo.getStop().doubleValue()));
 						return Double.valueOf(Math.max(initMax.doubleValue(), terceiro.getStop().doubleValue()));
 					}
 				}
@@ -308,7 +332,8 @@ public class CotacaoServiceImpl implements CotacaoService {
 					CotacaoTendenciaDTO primeiro = (CotacaoTendenciaDTO) tendencias.get(i - 2);
 					if ((primeiro.getWin().doubleValue() > 0.0D) && (segundo.getWin().doubleValue() > 0.0D)
 							&& (terceiro.getWin().doubleValue() > 0.0D)) {
-						Double initMax = Double.valueOf(Math.max(primeiro.getWin().doubleValue(), segundo.getWin().doubleValue()));
+						Double initMax = Double
+								.valueOf(Math.max(primeiro.getWin().doubleValue(), segundo.getWin().doubleValue()));
 						return Double.valueOf(Math.max(initMax.doubleValue(), terceiro.getWin().doubleValue()));
 					}
 				}
@@ -326,8 +351,12 @@ public class CotacaoServiceImpl implements CotacaoService {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.invest.service.rendaVariavel.impl.CotacaoService#salvar(com.invest.entidade.rendaVariavel.Cotacao)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.invest.service.rendaVariavel.impl.CotacaoService#salvar(com.invest.
+	 * entidade.rendaVariavel.Cotacao)
 	 */
 	@Override
 	public void salvar(Cotacao cotacao) throws InvestimentoBusinessException {
@@ -345,12 +374,17 @@ public class CotacaoServiceImpl implements CotacaoService {
 		}
 		if (cotacoes.size() == 1) {
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			throw new InvestimentoBusinessException("Cotacao j� cadastrada para essa data: " + dateFormat.format(cotacao.getData()));
+			throw new InvestimentoBusinessException(
+					"Cotacao j� cadastrada para essa data: " + dateFormat.format(cotacao.getData()));
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.invest.service.rendaVariavel.impl.CotacaoService#findByDataAndPapel(java.util.Date, com.invest.entidade.rendaVariavel.Papel)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.invest.service.rendaVariavel.impl.CotacaoService#findByDataAndPapel(
+	 * java.util.Date, com.invest.entidade.rendaVariavel.Papel)
 	 */
 	@Override
 	public Cotacao findByDataAndPapel(Date data, Papel papel) throws InvestimentoBusinessException {
@@ -364,8 +398,12 @@ public class CotacaoServiceImpl implements CotacaoService {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.invest.service.rendaVariavel.impl.CotacaoService#atualizarBMF(com.invest.entidade.rendaVariavel.Cotacao)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.invest.service.rendaVariavel.impl.CotacaoService#atualizarBMF(com.
+	 * invest.entidade.rendaVariavel.Cotacao)
 	 */
 	@Override
 	public void atualizarBMF(Cotacao cotacao) throws InvestimentoBusinessException {
@@ -373,8 +411,12 @@ public class CotacaoServiceImpl implements CotacaoService {
 		atualizarBMF(papel);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.invest.service.rendaVariavel.impl.CotacaoService#atualizarBMF(com.invest.entidade.rendaVariavel.Papel)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.invest.service.rendaVariavel.impl.CotacaoService#atualizarBMF(com.
+	 * invest.entidade.rendaVariavel.Papel)
 	 */
 	@Override
 	public void atualizarBMF(Papel papel) throws InvestimentoBusinessException {
@@ -389,8 +431,11 @@ public class CotacaoServiceImpl implements CotacaoService {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.invest.service.rendaVariavel.impl.CotacaoService#findUltimaCotacaoByPapel(com.invest.entidade.rendaVariavel.Papel)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.invest.service.rendaVariavel.impl.CotacaoService#
+	 * findUltimaCotacaoByPapel(com.invest.entidade.rendaVariavel.Papel)
 	 */
 	@Override
 	public Cotacao findUltimaCotacaoByPapel(Papel papel) {

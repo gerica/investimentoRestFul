@@ -11,15 +11,16 @@ import com.invest.service.rendaVariavel.dto.CotacaoTendenciaDTO;
 public interface CotacaoService {
 
 	/* Error */
-	void cadastrarCotacao(org.springframework.web.multipart.MultipartFile file, Cotacao cotacaoTela) throws InvestimentoBusinessException;
+	void cadastrarCotacao(org.springframework.web.multipart.MultipartFile file, Cotacao cotacaoTela)
+			throws InvestimentoBusinessException;
 
 	List<Cotacao> findAllByPapelOrderByDataDesc(Papel papel);
 
-	List<CotacaoTendenciaDTO> analizarAltaStopLoss(Papel papel);
+	List<CotacaoTendenciaDTO> analizarAltaStopLoss(Papel papel) throws InvestimentoBusinessException;
 
-	List<CotacaoTendenciaDTO> analizarAltaStopWin(Papel papel);
+	List<CotacaoTendenciaDTO> analizarAltaStopWin(Papel papel) throws InvestimentoBusinessException;
 
-	CotacaoTendenciaDTO getUltimoValorTendencia(Papel papel);
+	CotacaoTendenciaDTO getUltimoValorTendencia(Papel papel) throws InvestimentoBusinessException;
 
 	void salvar(Cotacao cotacao) throws InvestimentoBusinessException;
 

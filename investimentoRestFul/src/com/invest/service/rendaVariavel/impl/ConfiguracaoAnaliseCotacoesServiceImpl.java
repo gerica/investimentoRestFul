@@ -10,6 +10,7 @@ import com.invest.entidade.Usuario;
 import com.invest.entidade.rendaVariavel.ConfiguracaoAnaliseCotacoes;
 import com.invest.execao.InvestimentoBusinessException;
 import com.invest.repository.rendaVariavel.ConfiguracaoAnaliseCotacoesRepository;
+import com.invest.security.service.AuthenticationService;
 import com.invest.service.rendaVariavel.ConfiguracaoAnaliseCotacoesService;
 
 @Service
@@ -18,6 +19,9 @@ public class ConfiguracaoAnaliseCotacoesServiceImpl implements ConfiguracaoAnali
 
 	@Autowired
 	private ConfiguracaoAnaliseCotacoesRepository repository;
+	
+	@Autowired
+	private AuthenticationService authenticationService;
 
 	/*
 	 * (non-Javadoc)
@@ -28,7 +32,7 @@ public class ConfiguracaoAnaliseCotacoesServiceImpl implements ConfiguracaoAnali
 	 */
 	@Override
 	public ConfiguracaoAnaliseCotacoes findByUsuario() {
-		Usuario usuario = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Usuario usuario = authenticationService.get();
 		logger.info("findByUsuario " + usuario);
 		ConfiguracaoAnaliseCotacoes config = this.repository.findByUsuario(usuario);
 		if (config == null) {
@@ -48,8 +52,7 @@ public class ConfiguracaoAnaliseCotacoesServiceImpl implements ConfiguracaoAnali
 	@Override
 	public void gravar(ConfiguracaoAnaliseCotacoes config) throws InvestimentoBusinessException {
 		logger.info("Salvar " + config);
-		Usuario usuario = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		config.setUsuario(usuario);
+		config.setUsuario(authenticationService.get());
 		this.repository.save(config);
 	}
 }

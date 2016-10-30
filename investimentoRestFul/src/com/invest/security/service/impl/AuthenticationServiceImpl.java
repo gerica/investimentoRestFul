@@ -75,7 +75,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		String authToken = httpRequest.getHeader(AppConstant.tokenHeader);
 		String username = this.tokenUtils.getUsernameFromToken(authToken);
 
-		sessionFactory.getCurrentSession().get(Usuario.class, username);
+//		sessionFactory.getCurrentSession().get(Usuario.class, username);
 
 		return loadUserByUsername(username);
 	}
