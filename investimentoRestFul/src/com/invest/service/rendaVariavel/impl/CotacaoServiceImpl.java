@@ -1,10 +1,5 @@
 package com.invest.service.rendaVariavel.impl;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -25,7 +20,6 @@ import com.invest.service.rendaVariavel.ConfiguracaoAnaliseCotacoesService;
 import com.invest.service.rendaVariavel.CotacaoService;
 import com.invest.service.rendaVariavel.PapelService;
 import com.invest.service.rendaVariavel.dto.CotacaoTendenciaDTO;
-import com.invest.util.DataUtil;
 
 @Service
 public class CotacaoServiceImpl implements CotacaoService {
@@ -42,94 +36,11 @@ public class CotacaoServiceImpl implements CotacaoService {
 	@Autowired
 	private ConfiguracaoAnaliseCotacoesService analiseCotacoesService;
 
-	/* Error */
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.invest.service.rendaVariavel.impl.CotacaoService#cadastrarCotacao(org
-	 * .springframework.web.multipart.MultipartFile,
-	 * com.invest.entidade.rendaVariavel.Cotacao)
-	 */
-	@Override
-	public void cadastrarCotacao(org.springframework.web.multipart.MultipartFile file, Cotacao cotacaoTela)
-			throws InvestimentoBusinessException {
-		BufferedReader br = null;
-		String line = "";
-		String cvsSplitBy = ";";
-		try {
-			try {
-				br = new BufferedReader(new InputStreamReader(file.getInputStream()));
-				int linhaAtual = 0;
-				while ((line = br.readLine()) != null) {
-					if (linhaAtual == 0) {
-						++linhaAtual;
-						continue;
-					}
-					Cotacao cotacao = new Cotacao();
-					++linhaAtual;
-					try {
-						String[] values = line.split(cvsSplitBy);
-						cotacao.setData(DataUtil.parseToDate((String) values[0]));
-						cotacao.setAbertura(Double.valueOf(values[4].replace(",", ".")));
-						cotacao.setMaxima(Double.valueOf(values[7].replace(",", ".")));
-						cotacao.setMinima(Double.valueOf(values[5].replace(",", ".")));
-						cotacao.setFechamento(Double.valueOf(values[2].replace(",", ".")));
-						cotacao.setPapel(cotacaoTela.getPapel());
-					} catch (Exception e) {
-						logger.debug("Erro ao criar objeto de cota\u00e7\u00e3o");
-						e.printStackTrace();
-						throw new InvestimentoBusinessException(e.getMessage());
-					}
-					this.salvarCotacao(cotacao);
-				}
-			} catch (FileNotFoundException e) {
-				throw new InvestimentoBusinessException(e.getMessage());
-			} catch (IOException e) {
-				throw new InvestimentoBusinessException(e.getMessage());
-			}
-		} finally {
-			if (br != null) {
-				try {
-					br.close();
-				} catch (IOException e) {
-					throw new InvestimentoBusinessException(e.getMessage());
-				}
-			}
-		}
-	}
-
-	private void salvarCotacao(Cotacao cotacao) throws InvestimentoBusinessException {
-		logger.info("salvar cotacao");
-		if (cotacao.getData() != null) {
-			List<Cotacao> cotacoes = this.cotacaoRepository.findByDataAndPapel(cotacao.getData(), cotacao.getPapel());
-			if (cotacoes.size() >= 1) {
-				throw new InvestimentoBusinessException("Existe duas ou mais cota��es cadastada para esse dia: ");
-			}
-			this.cotacaoRepository.save(cotacao);
-			logger.debug("Cota��o j� cadastrada para essa data: " + cotacao.getData());
-		}
-		logger.debug("Cota��o esta sem data");
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.invest.service.rendaVariavel.impl.CotacaoService#
-	 * findAllByPapelOrderByDataDesc(com.invest.entidade.rendaVariavel.Papel)
-	 */
 	@Override
 	public List<Cotacao> findAllByPapelOrderByDataDesc(Papel papel) {
 		return this.cotacaoRepository.findAllByPapelOrderByDataDesc(papel);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.invest.service.rendaVariavel.impl.CotacaoService#analizarAltaStopLoss
-	 * (com.invest.entidade.rendaVariavel.Papel)
-	 */
 	@Override
 	public List<CotacaoTendenciaDTO> analizarAltaStopLoss(Papel papel) throws InvestimentoBusinessException {
 		ConfiguracaoAnaliseCotacoes configuracao = this.analiseCotacoesService.findByUsuario();
@@ -351,41 +262,36 @@ public class CotacaoServiceImpl implements CotacaoService {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.invest.service.rendaVariavel.impl.CotacaoService#salvar(com.invest.
-	 * entidade.rendaVariavel.Cotacao)
-	 */
-	@Override
-	public void salvar(Cotacao cotacao) throws InvestimentoBusinessException {
+	private void salvar(Cotacao cotacao) throws InvestimentoBusinessException {
 		logger.debug("salvar");
-		validar(cotacao);
+		cotacao = validar(cotacao);
 		this.cotacaoRepository.save(cotacao);
 	}
 
-	private void validar(Cotacao cotacao) throws InvestimentoBusinessException {
+	private Cotacao validar(Cotacao cotacao) throws InvestimentoBusinessException {
 		logger.debug("validar carteira");
 
 		List<Cotacao> cotacoes = this.cotacaoRepository.findByDataAndPapel(cotacao.getData(), cotacao.getPapel());
 		if (cotacoes.size() > 1) {
-			throw new InvestimentoBusinessException("Existe duas ou mais cota��es cadastada para esse dia: ");
+			throw new InvestimentoBusinessException("Existe duas ou mais cotações cadastada para esse dia: ");
+		} else if (cotacoes.size() == 1) {
+			Cotacao cotacaoBd = cotacoes.get(0);
+			cotacaoBd.setAbertura(cotacao.getAbertura());
+			cotacaoBd.setFechamento(cotacao.getFechamento());
+			cotacaoBd.setMaxima(cotacao.getMaxima());
+			cotacaoBd.setMinima(cotacao.getMinima());
+			return cotacaoBd;
 		}
-		if (cotacoes.size() == 1) {
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			throw new InvestimentoBusinessException(
-					"Cotacao j� cadastrada para essa data: " + dateFormat.format(cotacao.getData()));
-		}
+		return cotacao;
+
+		// if (cotacoes.size() == 1 && cotacao.getData().before(new Date())) {
+		// SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		// throw new InvestimentoBusinessException(
+		// "Cotacao já cadastrada para essa data: " +
+		// dateFormat.format(cotacao.getData()));
+		// }
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.invest.service.rendaVariavel.impl.CotacaoService#findByDataAndPapel(
-	 * java.util.Date, com.invest.entidade.rendaVariavel.Papel)
-	 */
 	@Override
 	public Cotacao findByDataAndPapel(Date data, Papel papel) throws InvestimentoBusinessException {
 		List<Cotacao> cotacoes = this.cotacaoRepository.findByDataAndPapel(data, papel);
@@ -398,30 +304,11 @@ public class CotacaoServiceImpl implements CotacaoService {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.invest.service.rendaVariavel.impl.CotacaoService#atualizarBMF(com.
-	 * invest.entidade.rendaVariavel.Cotacao)
-	 */
 	@Override
-	public void atualizarBMF(Cotacao cotacao) throws InvestimentoBusinessException {
-		Papel papel = this.papelService.findById(cotacao.getPapel().getId());
-		atualizarBMF(papel);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.invest.service.rendaVariavel.impl.CotacaoService#atualizarBMF(com.
-	 * invest.entidade.rendaVariavel.Papel)
-	 */
-	@Override
-	public void atualizarBMF(Papel papel) throws InvestimentoBusinessException {
-		List<Cotacao> cotacoes = this.htmlParser.read(papel.getNome());
-		if (!cotacoes.isEmpty()) {
+	public void atualizarHistoricoBMF() throws InvestimentoBusinessException {
+		List<Papel> papeis = papelService.findAllByAtivo();
+		for (Papel papel : papeis) {
+			List<Cotacao> cotacoes = this.htmlParser.lerCotacoesHistorica(papel.getPapel());
 			if (!cotacoes.isEmpty()) {
 				for (Cotacao c : cotacoes) {
 					c.setPapel(papel);
@@ -431,12 +318,40 @@ public class CotacaoServiceImpl implements CotacaoService {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.invest.service.rendaVariavel.impl.CotacaoService#
-	 * findUltimaCotacaoByPapel(com.invest.entidade.rendaVariavel.Papel)
-	 */
+	@Override
+	public void atualizarHistoricoBMF(Papel papel) throws InvestimentoBusinessException {
+		List<Cotacao> cotacoes = this.htmlParser.lerCotacoesHistorica(papel.getPapel());
+		if (!cotacoes.isEmpty()) {
+			for (Cotacao c : cotacoes) {
+				c.setPapel(papel);
+				salvar(c);
+			}
+		}
+
+	}
+
+	@Override
+	public void atualizarAtualBMF() throws InvestimentoBusinessException {
+		List<Papel> papeis = papelService.findAllByAtivo();
+		for (Papel papel : papeis) {
+			Cotacao cotacao = this.htmlParser.lerCotacaoAtual(papel.getPapel());
+			if (cotacao != null) {
+				cotacao.setPapel(papel);
+				salvar(cotacao);
+			}
+		}
+	}
+
+	public void atualizarAtualBMF(Papel papel) throws InvestimentoBusinessException {
+
+		Cotacao cotacao = this.htmlParser.lerCotacaoAtual(papel.getPapel());
+		if (cotacao != null) {
+			cotacao.setPapel(papel);
+			salvar(cotacao);
+		}
+
+	}
+
 	@Override
 	public Cotacao findUltimaCotacaoByPapel(Papel papel) {
 		return this.cotacaoRepository.findUltimaCotacaoByPapel(papel, papel);

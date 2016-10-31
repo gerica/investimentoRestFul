@@ -7,6 +7,8 @@ import com.invest.execao.InvestimentoBusinessException;
 
 public interface HTMLParserService {
 
-	List<Cotacao> read(String papel) throws InvestimentoBusinessException;
+	List<Cotacao> lerCotacoesHistorica(String papel) throws InvestimentoBusinessException;
+	
+	Cotacao lerCotacaoAtual(String papel) throws InvestimentoBusinessException;
 
 }

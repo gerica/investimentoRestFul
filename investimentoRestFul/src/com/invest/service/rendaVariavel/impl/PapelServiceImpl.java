@@ -41,7 +41,7 @@ public class PapelServiceImpl implements PapelService {
 	@Override
 	public void salvar(Papel papel) throws InvestimentoBusinessException {
 		logger.debug("salvar");
-//		this.validar(papel);
+		// this.validar(papel);
 		this.papelRepository.save(papel);
 	}
 
@@ -117,7 +117,7 @@ public class PapelServiceImpl implements PapelService {
 		List<Papel> papeis = this.papelRepository.findAllByAtivo(Boolean.valueOf(true));
 		for (Papel papel : papeis) {
 			try {
-				this.cotacaoService.atualizarBMF(papel);
+				this.cotacaoService.atualizarAtualBMF(papel);
 				continue;
 			} catch (InvestimentoBusinessException e) {
 				logger.debug(e.getMessage());
@@ -147,7 +147,7 @@ public class PapelServiceImpl implements PapelService {
 		this.salvar(papel);
 		return papel;
 	}
-	
+
 	@Override
 	public void ativarDesativar(Integer idPapel) throws InvestimentoBusinessException {
 		Papel papel = this.papelRepository.findById(idPapel);

@@ -10,10 +10,6 @@ import com.invest.service.rendaVariavel.dto.CotacaoTendenciaDTO;
 
 public interface CotacaoService {
 
-	/* Error */
-	void cadastrarCotacao(org.springframework.web.multipart.MultipartFile file, Cotacao cotacaoTela)
-			throws InvestimentoBusinessException;
-
 	List<Cotacao> findAllByPapelOrderByDataDesc(Papel papel);
 
 	List<CotacaoTendenciaDTO> analizarAltaStopLoss(Papel papel) throws InvestimentoBusinessException;
@@ -22,13 +18,15 @@ public interface CotacaoService {
 
 	CotacaoTendenciaDTO getUltimoValorTendencia(Papel papel) throws InvestimentoBusinessException;
 
-	void salvar(Cotacao cotacao) throws InvestimentoBusinessException;
-
 	Cotacao findByDataAndPapel(Date data, Papel papel) throws InvestimentoBusinessException;
 
-	void atualizarBMF(Cotacao cotacao) throws InvestimentoBusinessException;
+	void atualizarHistoricoBMF() throws InvestimentoBusinessException;
 
-	void atualizarBMF(Papel papel) throws InvestimentoBusinessException;
+	void atualizarHistoricoBMF(Papel papel) throws InvestimentoBusinessException;
+
+	void atualizarAtualBMF() throws InvestimentoBusinessException;
+
+	void atualizarAtualBMF(Papel papel) throws InvestimentoBusinessException;
 
 	Cotacao findUltimaCotacaoByPapel(Papel papel);
 
