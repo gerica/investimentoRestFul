@@ -40,7 +40,7 @@ public class OperacaoSaidaServiceImpl implements OperacaoSaidaService {
 		
 		OperacaoEntrada entrada = this.operacaoEntradaService.findById(operacao.getOperacaoEntrada().getId());
 		if (operacao.getQuantidade().intValue() > entrada.getQuantidade().intValue()) {
-			throw new InvestimentoBusinessException("A quantidade que foi informada � maior que a quantida na opera��o de entrada.");
+			throw new InvestimentoBusinessException("A quantidade que foi informada é maior que a quantida na operação de entrada.");
 		}
 		if (operacao.getQuantidade().intValue() < entrada.getQuantidade().intValue()) {
 			entrada.setQuantidade(Integer.valueOf(entrada.getQuantidade().intValue() - operacao.getQuantidade().intValue()));
@@ -48,7 +48,11 @@ public class OperacaoSaidaServiceImpl implements OperacaoSaidaService {
 			entrada.setQuantidade(Integer.valueOf(entrada.getQuantidade().intValue() - operacao.getQuantidade().intValue()));
 			entrada.setAtivo(Boolean.valueOf(false));
 		}
-		this.operacaoEntradaService.salvar(entrada);
+		if (entrada.getQuantidade() == 0) {
+			this.operacaoEntradaService.fechar(entrada);
+		} else {
+			this.operacaoEntradaService.salvarSemRegra(entrada);
+		}
 		this.operacaoSaidaRepository.save(operacao);
 	}
 

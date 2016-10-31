@@ -49,13 +49,6 @@ public class OperacaoEntradaServiceImpl implements OperacaoEntradaService {
 	@Autowired
 	private UsuarioOperacaoService usuarioOperacaoService;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.invest.service.rendaVariavel.impl.OperacaoEntradaService#salvar(com.
-	 * invest.entidade.rendaVariavel.OperacaoEntrada)
-	 */
 	@Override
 	// @Transactional
 	public void salvar(OperacaoEntrada operacao) throws InvestimentoBusinessException {
@@ -223,5 +216,15 @@ public class OperacaoEntradaServiceImpl implements OperacaoEntradaService {
 			throw new InvestimentoBusinessException(
 					"Não é possível excluir operação de entrada, pois essa operação possui operação de saída");
 		}
+	}
+
+	@Override
+	public void salvarSemRegra(OperacaoEntrada operacao) throws InvestimentoBusinessException {
+		if (operacao != null) {
+			this.operacaoEntradaRepository.save(operacao);
+		} else {
+			throw new InvestimentoBusinessException("Não existe nenhuma operação para ser salva.");
+		}
+
 	}
 }
