@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.invest.entidade.Usuario;
 import com.invest.entidade.rendaVariavel.OperacaoEntrada;
@@ -31,6 +32,13 @@ public class UsuarioOperacaoServiceImpl implements UsuarioOperacaoService {
 
 		usuarioOperacaoRepository.save(usuarioOperacao);
 
+	}
+
+	@Override
+	@Transactional
+	public void excluir(OperacaoEntrada operacao) {
+		logger.info("UsuarioOperacaoServiceImpl.excluir()");
+		usuarioOperacaoRepository.deleteByOperacaoEntrada(operacao);
 	}
 
 }

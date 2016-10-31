@@ -36,7 +36,8 @@ public class OperacaoSaidaServiceImpl implements OperacaoSaidaService {
 	 */
 	@Override
 	public void salvar(OperacaoSaida operacao) throws InvestimentoBusinessException {
-		logger.info("salvar opera��o de sa�da");
+		logger.info("salvar operação de saída");
+		
 		OperacaoEntrada entrada = this.operacaoEntradaService.findById(operacao.getOperacaoEntrada().getId());
 		if (operacao.getQuantidade().intValue() > entrada.getQuantidade().intValue()) {
 			throw new InvestimentoBusinessException("A quantidade que foi informada � maior que a quantida na opera��o de entrada.");
@@ -57,5 +58,10 @@ public class OperacaoSaidaServiceImpl implements OperacaoSaidaService {
 	@Override
 	public List<OperacaoSaida> findByOperacaoEntrada(OperacaoEntrada operacaoEntrada) {
 		return this.operacaoSaidaRepository.findByOperacaoEntrada(operacaoEntrada);
+	}
+
+	@Override
+	public List<OperacaoSaida> findOperacaoSaidaFechado() {
+		return operacaoSaidaRepository.findOperacaoSaidaFechado();
 	}
 }

@@ -22,9 +22,11 @@ import com.invest.controller.dto.ErrorResponse;
 import com.invest.controller.dto.SuccessResponse;
 import com.invest.entidade.permissao.RoleEnum;
 import com.invest.entidade.rendaVariavel.OperacaoEntrada;
+import com.invest.entidade.rendaVariavel.OperacaoSaida;
 import com.invest.entidade.rendaVariavel.Papel;
 import com.invest.execao.InvestimentoBusinessException;
 import com.invest.service.rendaVariavel.OperacaoEntradaService;
+import com.invest.service.rendaVariavel.OperacaoSaidaService;
 
 @RestController
 public class OperacaoRestController {
@@ -33,12 +35,14 @@ public class OperacaoRestController {
 	@Autowired
 	private OperacaoEntradaService entradaService;
 
-	@RequestMapping(method = RequestMethod.POST, value = UriConstInvestimento.URI_SALVAR_OPERACAO)
-//	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+	@Autowired
+	private OperacaoSaidaService saidaService;
+
+	@RequestMapping(method = RequestMethod.POST, value = UriConstInvestimento.URI_SALVAR_OPERACAO_ENTRADA)
 	@RolesAllowed({ RoleEnum.Constants.ROLE_ADMIN, RoleEnum.Constants.ROLE_CONVIDADO })
 	@ResponseBody
-	public ResponseEntity<? extends AbstractResponse> salvarOperacao(@RequestBody OperacaoEntrada operacao) {
-		logger.info("OperacaoRestController.salvarOperacao()");
+	public ResponseEntity<? extends AbstractResponse> salvarOperacaoEntrada(@RequestBody OperacaoEntrada operacao) {
+		logger.info("OperacaoRestController.salvarOperacaoEntrada()");
 
 		try {
 			entradaService.salvar(operacao);
@@ -52,34 +56,74 @@ public class OperacaoRestController {
 
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = UriConstInvestimento.URI_RECUPERAR_OPERACAO_ENTRADA)
-	// @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.POST, value = UriConstInvestimento.URI_SALVAR_OPERACAO_SAIDA)
+	@RolesAllowed({ RoleEnum.Constants.ROLE_ADMIN, RoleEnum.Constants.ROLE_CONVIDADO })
 	@ResponseBody
-	public ResponseEntity<OperacaoEntrada> getOperacao() {
-		logger.info("OperacaoRestController.salvarOperacao()");
-		OperacaoEntrada operacao = new OperacaoEntrada();
-		operacao.setData(new Date());
-		operacao.setTipoOperacao("Comprar");
-		operacao.setPrecoUnitario(15.36);
-		operacao.setQuantidade(100);
-		operacao.setDespesa(5.65);
-		operacao.setObservacao("vamos ver");
+	public ResponseEntity<? extends AbstractResponse> salvarOperacaoSaida(@RequestBody OperacaoSaida operacao) {
+		logger.info("OperacaoRestController.salvarOperacaoSaida()");
 
-		Papel papel = new Papel();
-		papel.setNome("CIA HERING");
-		papel.setPapel("HGTX3");
-		operacao.setPapel(papel);
+		try {
+			saidaService.salvar(operacao);
+		} catch (InvestimentoBusinessException e) {
+			ErrorResponse error = new ErrorResponse(e.getMessage());
+			return new ResponseEntity<ErrorResponse>(error, HttpStatus.BAD_REQUEST);
+		}
 
-		return new ResponseEntity<OperacaoEntrada>(operacao, HttpStatus.OK);
+		SuccessResponse success = new SuccessResponse("Operação realizada com sucesso");
+		return new ResponseEntity<SuccessResponse>(success, HttpStatus.OK);
+
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = UriConstInvestimento.URI_RECUPERAR_TODAS_OPERACAO_ENTRADA)
-	@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+	@RequestMapping(method = RequestMethod.POST, value = UriConstInvestimento.URI_EXCLUIR_OPERACAO_ENTRADA)
+	@RolesAllowed({ RoleEnum.Constants.ROLE_ADMIN, RoleEnum.Constants.ROLE_CONVIDADO })
 	@ResponseBody
-	public List<OperacaoEntrada> getAllOperacaoEntrada() {
-		logger.info("OperacaoRestController.getAllOperacaoEntrada()");
+	public ResponseEntity<? extends AbstractResponse> excluirOperacaoEntrada(@RequestBody OperacaoEntrada operacao) {
+		logger.info("OperacaoRestController.excluirOperacaoEntrada()");
+		try {
+			entradaService.excluir(operacao);
+		} catch (InvestimentoBusinessException e) {
+			ErrorResponse error = new ErrorResponse(e.getMessage());
+			return new ResponseEntity<ErrorResponse>(error, HttpStatus.BAD_REQUEST);
+		}
+
+		SuccessResponse success = new SuccessResponse("Operação realizada com sucesso");
+		return new ResponseEntity<SuccessResponse>(success, HttpStatus.OK);
+
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = UriConstInvestimento.URI_EDITAR_OPERACAO_ENTRADA)
+	@RolesAllowed({ RoleEnum.Constants.ROLE_ADMIN, RoleEnum.Constants.ROLE_CONVIDADO })
+	@ResponseBody
+	public ResponseEntity<? extends AbstractResponse> editarOperacaoEntrada(@RequestBody OperacaoEntrada operacao) {
+		logger.info("OperacaoRestController.editarOperacaoEntrada()");
+		try {
+			entradaService.salvar(operacao);
+		} catch (InvestimentoBusinessException e) {
+			ErrorResponse error = new ErrorResponse(e.getMessage());
+			return new ResponseEntity<ErrorResponse>(error, HttpStatus.BAD_REQUEST);
+		}
+		
+		SuccessResponse success = new SuccessResponse("Operação realizada com sucesso");
+		return new ResponseEntity<SuccessResponse>(success, HttpStatus.OK);
+		
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = UriConstInvestimento.URI_RECUPERAR_OPERACAO_ENTRADA_ABERTA)
+	@RolesAllowed({ RoleEnum.Constants.ROLE_ADMIN, RoleEnum.Constants.ROLE_CONVIDADO })
+	@ResponseBody
+	public List<OperacaoEntrada> recuperarOperacaoEntradaAberta() {
+		logger.info("OperacaoRestController.recuperarOperacaoEntradaAberta()");
 
 		return entradaService.findAllOperacaoAtiva();
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = UriConstInvestimento.URI_RECUPERAR_OPERACAO_ENTRADA_FECHADA)
+	@RolesAllowed({ RoleEnum.Constants.ROLE_ADMIN, RoleEnum.Constants.ROLE_CONVIDADO })
+	@ResponseBody
+	public List<OperacaoSaida> recuperarOperacaoEntradaFechada() {
+		logger.info("OperacaoRestController.recuperarOperacaoEntradaFechada()");
+
+		return saidaService.findOperacaoSaidaFechado();
 	}
 
 }

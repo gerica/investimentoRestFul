@@ -27,4 +27,6 @@ public interface OperacaoEntradaService {
 
 	List<OperacaoEntrada> findByDataLessThanEqualAndAtivo(Date dataMaior);
 
+	void excluir(OperacaoEntrada operacao) throws InvestimentoBusinessException;
+
 }

@@ -13,5 +13,7 @@ public interface OperacaoSaidaService {
 	void salvar(OperacaoSaida operacao) throws InvestimentoBusinessException;
 
 	List<OperacaoSaida> findByOperacaoEntrada(OperacaoEntrada operacaoEntrada);
+	
+	List<OperacaoSaida> findOperacaoSaidaFechado();
 
 }

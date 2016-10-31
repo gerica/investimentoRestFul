@@ -7,4 +7,6 @@ public interface UsuarioOperacaoService {
 
 	void salvar(OperacaoEntrada operacao, Usuario usuario);
 
+	void excluir(OperacaoEntrada operacao);
+
 }

@@ -207,4 +207,21 @@ public class OperacaoEntradaServiceImpl implements OperacaoEntradaService {
 	public List<OperacaoEntrada> findByDataLessThanEqualAndAtivo(Date dataMaior) {
 		return this.operacaoEntradaRepository.findByDataLessThanEqualAndAtivo(dataMaior, true);
 	}
+
+	@Override
+	public void excluir(OperacaoEntrada operacao) throws InvestimentoBusinessException {
+		validarExcluirOperacao(operacao);
+
+		this.usuarioOperacaoService.excluir(operacao);
+		this.operacaoEntradaRepository.delete(operacao.getId());
+
+	}
+
+	private void validarExcluirOperacao(OperacaoEntrada operacao) throws InvestimentoBusinessException {
+		List<OperacaoSaida> lista = operacaoSaidaService.findByOperacaoEntrada(operacao);
+		if (lista.size() > 0) {
+			throw new InvestimentoBusinessException(
+					"Não é possível excluir operação de entrada, pois essa operação possui operação de saída");
+		}
+	}
 }
