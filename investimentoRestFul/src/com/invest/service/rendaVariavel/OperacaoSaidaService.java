@@ -14,6 +14,6 @@ public interface OperacaoSaidaService {
 
 	List<OperacaoSaida> findByOperacaoEntrada(OperacaoEntrada operacaoEntrada);
 	
-	List<OperacaoSaida> findOperacaoSaidaFechado();
+	List<OperacaoSaida> findOperacaoSaida();
 
 }

@@ -56,7 +56,7 @@ public class OperacaoSaida {
 	@Transient
 	public Double getTotalOperacao() {
 		if ((this.precoUnitario != null) && (this.operacaoEntrada != null) && (this.operacaoEntrada.getQuantidade() != null)) {
-			return Double.valueOf(this.precoUnitario.doubleValue() * this.operacaoEntrada.getQuantidade().intValue());
+			return Double.valueOf(this.precoUnitario.doubleValue() * this.getQuantidade().intValue()) - this.getDespesa();
 		}
 		return Double.valueOf(0.0D);
 	}

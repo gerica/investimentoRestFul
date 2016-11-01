@@ -18,5 +18,5 @@ public abstract interface OperacaoSaidaRepository extends CrudRepository<Operaca
 	public abstract List<OperacaoSaida> findByOperacaoEntrada(OperacaoEntrada paramOperacaoEntrada);
 
 	@Query("SELECT os FROM OperacaoSaida os WHERE os.operacaoEntrada is not null order by os.operacaoEntrada.data asc")
-	public abstract List<OperacaoSaida> findOperacaoSaidaFechado();
+	public abstract List<OperacaoSaida> findOperacaoSaida();
 }

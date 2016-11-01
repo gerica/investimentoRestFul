@@ -19,7 +19,7 @@ public abstract class UriConstInvestimento {
 	public static final String URI_SALVAR_OPERACAO_ENTRADA = "salvarOperacaoEntrada";
 	public static final String URI_SALVAR_OPERACAO_SAIDA = "salvarOperacaoSaida";
 	public static final String URI_RECUPERAR_OPERACAO_ENTRADA_ABERTA = "recuperarOperacaoEntradaAberta";
-	public static final String URI_RECUPERAR_OPERACAO_ENTRADA_FECHADA = "recuperarOperacaoEntradaFechada";
+	public static final String URI_RECUPERAR_OPERACAO_SAIDA = "recuperarOperacaoSaida";
 	public static final String URI_RECUPERAR_TODAS_OPERACAO_ENTRADA = "recuperarTodasOperacaoEntrada";
 	public static final String URI_EXCLUIR_OPERACAO_ENTRADA = "excluirOperacaoEntrada";
 	public static final String URI_EDITAR_OPERACAO_ENTRADA = "editarOperacaoEntrada";

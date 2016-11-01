@@ -1,6 +1,5 @@
 package com.invest.controller;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
@@ -10,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,7 +21,6 @@ import com.invest.controller.dto.SuccessResponse;
 import com.invest.entidade.permissao.RoleEnum;
 import com.invest.entidade.rendaVariavel.OperacaoEntrada;
 import com.invest.entidade.rendaVariavel.OperacaoSaida;
-import com.invest.entidade.rendaVariavel.Papel;
 import com.invest.execao.InvestimentoBusinessException;
 import com.invest.service.rendaVariavel.OperacaoEntradaService;
 import com.invest.service.rendaVariavel.OperacaoSaidaService;
@@ -117,13 +114,13 @@ public class OperacaoRestController {
 		return entradaService.findAllOperacaoAtiva();
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = UriConstInvestimento.URI_RECUPERAR_OPERACAO_ENTRADA_FECHADA)
+	@RequestMapping(method = RequestMethod.GET, value = UriConstInvestimento.URI_RECUPERAR_OPERACAO_SAIDA)
 	@RolesAllowed({ RoleEnum.Constants.ROLE_ADMIN, RoleEnum.Constants.ROLE_CONVIDADO })
 	@ResponseBody
-	public List<OperacaoSaida> recuperarOperacaoEntradaFechada() {
-		logger.info("OperacaoRestController.recuperarOperacaoEntradaFechada()");
+	public List<OperacaoSaida> recuperarOperacaoSaida() {
+		logger.info("OperacaoRestController.recuperarOperacaoSaida()");
 
-		return saidaService.findOperacaoSaidaFechado();
+		return saidaService.findOperacaoSaida();
 	}
 
 }

@@ -65,7 +65,7 @@ public class OperacaoSaidaServiceImpl implements OperacaoSaidaService {
 	}
 
 	@Override
-	public List<OperacaoSaida> findOperacaoSaidaFechado() {
-		return operacaoSaidaRepository.findOperacaoSaidaFechado();
+	public List<OperacaoSaida> findOperacaoSaida() {
+		return operacaoSaidaRepository.findOperacaoSaida();
 	}
 }
