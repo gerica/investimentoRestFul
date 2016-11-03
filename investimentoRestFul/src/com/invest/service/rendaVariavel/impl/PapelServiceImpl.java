@@ -100,6 +100,7 @@ public class PapelServiceImpl implements PapelService {
 			dto.setPorcentagemLucroPrejuizo(this.calcularProcentagemLucroPrejuizo(entrada, cotacao));
 			dto.setSaldoLucroPrejuizo(this.calcularSaldo(entrada, cotacao));
 			dto.setLucroPrejuizo(this.calcularQtdLucroPrejuizo(entrada, cotacao));
+			dto.setOperacaoEntrada(entrada);
 			balancos.add(dto);
 		}
 		return balancos;

@@ -143,8 +143,9 @@ public class DataUtil {
 				|| dataAtransformar.length() == 9 //
 				|| dataAtransformar.length() == 16 //
 				|| dataAtransformar.length() == 17)) {
-			throw new IllegalArgumentException(
-					"A data para esse método terá que estar no formato DD de MMM ou DD de MMM de YYYY. Exemplo: (28 de ago) ou (28 de ago de 2016)");
+//			throw new IllegalArgumentException(
+//					"A data para esse método terá que estar no formato DD de MMM ou DD de MMM de YYYY. Exemplo: (28 de ago) ou (28 de ago de 2016): Data informada:"+dataAtransformar);
+			return new Date();
 		}
 		LocalDateTime now = LocalDateTime.now();
 		int year = now.getYear();

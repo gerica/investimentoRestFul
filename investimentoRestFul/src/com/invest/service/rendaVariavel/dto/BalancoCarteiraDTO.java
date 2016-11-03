@@ -2,6 +2,8 @@ package com.invest.service.rendaVariavel.dto;
 
 import java.util.Date;
 
+import com.invest.entidade.rendaVariavel.OperacaoEntrada;
+
 public class BalancoCarteiraDTO
 {
   private String papel;
@@ -14,8 +16,7 @@ public class BalancoCarteiraDTO
   private Double lucroPrejuizo;
   private Double saldoLucroPrejuizo;
   private String classCssLucroPrejuizo;
-  private static final String CSS_LUCRO = "success";
-  private static final String CSS_PREJUIZO = "danger";
+  private OperacaoEntrada operacaoEntrada;
   
   public String getPapel()
   {
@@ -121,4 +122,12 @@ public class BalancoCarteiraDTO
   {
     this.valorInvestimento = valorInvestimento;
   }
+
+public OperacaoEntrada getOperacaoEntrada() {
+	return operacaoEntrada;
+}
+
+public void setOperacaoEntrada(OperacaoEntrada operacaoEntrada) {
+	this.operacaoEntrada = operacaoEntrada;
+}
 }
