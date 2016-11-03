@@ -25,6 +25,7 @@ import com.invest.entidade.rendaVariavel.SetorEnum;
 import com.invest.execao.InvestimentoBusinessException;
 import com.invest.service.rendaVariavel.PapelService;
 import com.invest.service.rendaVariavel.TabelaMagicaService;
+import com.invest.service.rendaVariavel.dto.BalancoCarteiraDTO;
 
 @RestController
 public class PapelRestController {
@@ -88,6 +89,24 @@ public class PapelRestController {
 		SuccessResponse success = new SuccessResponse("Operação realizada com sucesso");
 		return new ResponseEntity<SuccessResponse>(success, HttpStatus.OK);
 
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = UriConstInvestimento.URI_RECUPERAR_BALANCO_HOJE)
+	@RolesAllowed({ RoleEnum.Constants.ROLE_ADMIN, RoleEnum.Constants.ROLE_CONVIDADO })
+	@ResponseBody
+	public ResponseEntity<? extends AbstractResponse> recuperarBalancoHoje() {
+		logger.info("PapelRestController.recuperarBalancoHoje()");
+		List<BalancoCarteiraDTO> result;
+
+		try {
+			result = papelService.findBalancoHoje();
+		} catch (InvestimentoBusinessException e) {
+			ErrorResponse error = new ErrorResponse(e.getMessage());
+			return new ResponseEntity<ErrorResponse>(error, HttpStatus.BAD_REQUEST);
+		}
+
+		SuccessResponse success = new SuccessResponse("Operação realizada com sucesso", result);
+		return new ResponseEntity<SuccessResponse>(success, HttpStatus.OK);
 	}
 
 }

@@ -179,6 +179,7 @@ public class HTMLParserServiceImpl implements HTMLParserService {
 
 			// Data
 			Elements dataCotacao = doc.select("span.time_rtq");
+			System.out.println(dataCotacao.text());
 			cotacao.setData(DataUtil.parseToDateTransformeString(dataCotacao.text()));
 
 			// fechamento

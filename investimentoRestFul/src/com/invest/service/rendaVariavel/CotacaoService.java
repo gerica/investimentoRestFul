@@ -28,6 +28,6 @@ public interface CotacaoService {
 
 	void atualizarAtualBMF(Papel papel) throws InvestimentoBusinessException;
 
-	Cotacao findUltimaCotacaoByPapel(Papel papel);
+	Cotacao findUltimaCotacaoByPapel(Papel papel) throws InvestimentoBusinessException;
 
 }

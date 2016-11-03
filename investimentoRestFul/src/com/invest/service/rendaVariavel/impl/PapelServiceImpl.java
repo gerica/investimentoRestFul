@@ -82,7 +82,7 @@ public class PapelServiceImpl implements PapelService {
 	 * @see com.invest.service.rendaVariavel.PapelService#findBalancoHoje()
 	 */
 	@Override
-	public List<BalancoCarteiraDTO> findBalancoHoje() {
+	public List<BalancoCarteiraDTO> findBalancoHoje() throws InvestimentoBusinessException {
 		List<OperacaoEntrada> entradas = this.operacaoEntradaService.findAllOperacaoAtiva();
 		BalancoCarteiraDTO dto = null;
 		ArrayList<BalancoCarteiraDTO> balancos = new ArrayList<BalancoCarteiraDTO>();

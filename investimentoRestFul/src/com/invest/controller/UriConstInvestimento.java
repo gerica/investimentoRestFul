@@ -10,6 +10,7 @@ public abstract class UriConstInvestimento {
 	public static final String URI_ATIVAR_DESATIVAR_PAPEL = "ativarDesativarPapel";
 	public static final String URI_RECUPERAR_PAPEIS_ATIVO = "recuperarPapeisAtivo";
 	public static final String URI_RECUPERAR_TODOS_PAPEIS = "recuperarTodosPapeis";
+	public static final String URI_RECUPERAR_BALANCO_HOJE = "recuperarBalancoHoje";
 
 	// Functionalidades para USUÁRIOS
 	public static final String URI_REGISTRAR_USUARIO = "/registrarUsuario";
@@ -28,7 +29,7 @@ public abstract class UriConstInvestimento {
 	// Funcionalidades de CONFIGURAÇÃO ANÁLISE COTAÇÃO
 	public static final String URI_RECUPERAR_CONFIGURACAO_ANALISE = "recuperarConfiguracaoAnalise";
 	public static final String URI_SALVAR_CONFIGURACAO_ANALISE = "salvarConfiguracaoAnalise";
-	
+	public static final String URI_RECUPERAR_ULTIMA_COTACAO = "recuperarUltimaCotacao/{idPapel}";	
 	public static final String URI_ATUALIZAR_HISTORICO_BMF = "atualizarHistoricoBMF";
 	public static final String URI_ATUALIZAR_ATUAL_BMF = "atualizarAtualBMF";
 

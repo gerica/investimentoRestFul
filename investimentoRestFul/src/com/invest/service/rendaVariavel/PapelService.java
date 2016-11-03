@@ -16,7 +16,7 @@ public interface PapelService {
 
 	Papel findById(Integer idPapel);
 
-	List<BalancoCarteiraDTO> findBalancoHoje();
+	List<BalancoCarteiraDTO> findBalancoHoje() throws InvestimentoBusinessException;
 
 	// @Scheduled(cron = "0 0 20 * * ?")
 	void schedulerAtualizarCotacao() throws InvestimentoBusinessException;
