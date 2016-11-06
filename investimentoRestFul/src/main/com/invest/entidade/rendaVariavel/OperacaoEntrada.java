@@ -26,25 +26,18 @@ public class OperacaoEntrada {
 	private Papel papel;
 
 	@Column(name = "dt_operacao_entrada")
-	// @NotNull(message="A data n�o pode ser em branco!")
-	// @JsonSerialize(using=CustomDateSerializer.class)
-	// @JsonDeserialize(using=CustomDateDeserializer.class)
 	private Date data;
 
 	@Column(name = "ds_tipo_operacao")
-	// @NotEmpty(message="O tipo de opera��o n�o pode ser em branco!")
 	private String tipoOperacao;
 
 	@Column(name = "nr_preco_unitario")
-	// @NotNull(message="O valor do pre�o unit�rio n�o pode ser em branco!")
 	private Double precoUnitario;
 
 	@Column(name = "nr_despesa")
-	// @NotNull(message="O valor da despesa n�o pode ser em branco!")
 	private Double despesa;
 
 	@Column(name = "nr_quantidade")
-	// @NotNull(message="A quantidade n�o pode ser em branco!")
 	private Integer quantidade;
 
 	@Column(name = "nr_stop_loss")
@@ -213,10 +206,10 @@ public class OperacaoEntrada {
 
 	@Override
 	public String toString() {
-		return "OperacaoEntrada [id=" + id + ", papel=" + papel + ", data=" + data + ", tipoOperacao=" + tipoOperacao + ", precoUnitario="
-				+ precoUnitario + ", despesa=" + despesa + ", quantidade=" + quantidade + ", stopLoss=" + stopLoss + ", stopWin=" + stopWin
-				+ ", podeRemover=" + podeRemover + ", avaliacaoEntrada=" + avaliacaoEntrada + ", observacao=" + observacao + ", ativo="
-				+ ativo + "]";
+		return "OperacaoEntrada [id=" + id + ", papel=" + papel + ", data=" + data + ", tipoOperacao=" + tipoOperacao
+				+ ", precoUnitario=" + precoUnitario + ", despesa=" + despesa + ", quantidade=" + quantidade
+				+ ", stopLoss=" + stopLoss + ", stopWin=" + stopWin + ", podeRemover=" + podeRemover
+				+ ", avaliacaoEntrada=" + avaliacaoEntrada + ", observacao=" + observacao + ", ativo=" + ativo + "]";
 	}
 
 }

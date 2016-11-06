@@ -73,10 +73,13 @@ public class OperacaoRestController {
 	@RequestMapping(method = RequestMethod.GET, value = UriConstInvestimento.URI_RECUPERAR_OPERACAO_ENTRADA_ABERTA)
 	@RolesAllowed({ RoleEnum.Constants.ROLE_ADMIN, RoleEnum.Constants.ROLE_CONVIDADO })
 	@ResponseBody
-	public List<OperacaoEntrada> recuperarOperacaoEntradaAberta() {
-		logger.info("OperacaoRestController.recuperarOperacaoEntradaAberta()");
 
-		return entradaService.findAllOperacaoAtiva();
+	public ResponseEntity<? extends AbstractResponse> recuperarOperacaoEntradaAberta() {
+		logger.info("PapelRestController.recuperarOperacaoEntradaAberta()");
+		List<OperacaoEntrada> result = entradaService.findAllOperacaoAtiva();
+
+		SuccessResponse success = new SuccessResponse("Operação realizada com sucesso", result);
+		return new ResponseEntity<SuccessResponse>(success, HttpStatus.OK);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = UriConstInvestimento.URI_RECUPERAR_OPERACAO_SAIDA)
