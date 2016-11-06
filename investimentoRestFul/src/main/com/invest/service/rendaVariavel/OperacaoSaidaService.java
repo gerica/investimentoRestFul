@@ -13,7 +13,10 @@ public interface OperacaoSaidaService {
 	void salvar(OperacaoSaida operacao) throws InvestimentoBusinessException;
 
 	List<OperacaoSaida> findByOperacaoEntrada(OperacaoEntrada operacaoEntrada);
-	
+
 	List<OperacaoSaida> findOperacaoSaida();
+
+	List<OperacaoSaida> findByAnoMesPapel(Integer ano, Integer mes, Integer idPapel)
+			throws InvestimentoBusinessException;
 
 }

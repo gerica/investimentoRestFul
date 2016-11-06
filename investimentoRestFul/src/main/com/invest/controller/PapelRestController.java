@@ -108,5 +108,25 @@ public class PapelRestController {
 		SuccessResponse success = new SuccessResponse("Operação realizada com sucesso", result);
 		return new ResponseEntity<SuccessResponse>(success, HttpStatus.OK);
 	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = UriConstInvestimento.URI_RECUPERAR_PAPEIS_OPERECAO)
+	@RolesAllowed({ RoleEnum.Constants.ROLE_ADMIN, RoleEnum.Constants.ROLE_CONVIDADO })
+	@ResponseBody
+	public ResponseEntity<? extends AbstractResponse> recuperarPapeisOperacao() {
+		logger.info("PapelRestController.recuperarPapeisOperacao()");
+		List<Papel> result;
+		
+		try {
+			result = papelService.findHasOperacao();
+		} catch (InvestimentoBusinessException e) {
+			ErrorResponse error = new ErrorResponse(e.getMessage());
+			return new ResponseEntity<ErrorResponse>(error, HttpStatus.BAD_REQUEST);
+		}
+		
+		SuccessResponse success = new SuccessResponse("Operação realizada com sucesso", result);
+		return new ResponseEntity<SuccessResponse>(success, HttpStatus.OK);
+	}
+	
+
 
 }

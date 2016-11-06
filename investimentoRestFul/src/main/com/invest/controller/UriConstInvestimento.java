@@ -11,6 +11,7 @@ public abstract class UriConstInvestimento {
 	public static final String URI_RECUPERAR_PAPEIS_ATIVO = "recuperarPapeisAtivo";
 	public static final String URI_RECUPERAR_TODOS_PAPEIS = "recuperarTodosPapeis";
 	public static final String URI_RECUPERAR_BALANCO_HOJE = "recuperarBalancoHoje";
+	public static final String URI_RECUPERAR_PAPEIS_OPERECAO = "recuperarPapeisOperacao";
 
 	// Functionalidades para USUÁRIOS
 	public static final String URI_REGISTRAR_USUARIO = "/registrarUsuario";
@@ -24,12 +25,12 @@ public abstract class UriConstInvestimento {
 	public static final String URI_RECUPERAR_TODAS_OPERACAO_ENTRADA = "recuperarTodasOperacaoEntrada";
 	public static final String URI_EXCLUIR_OPERACAO_ENTRADA = "excluirOperacaoEntrada";
 	public static final String URI_EDITAR_OPERACAO_ENTRADA = "editarOperacaoEntrada";
-	
+	public static final String URI_RECUPERAR_RELATORIO_SAIDA = "recuperarRelatorioSaida/{ano}/{mes}/{idPapel}";
 
 	// Funcionalidades de CONFIGURAÇÃO ANÁLISE COTAÇÃO
 	public static final String URI_RECUPERAR_CONFIGURACAO_ANALISE = "recuperarConfiguracaoAnalise";
 	public static final String URI_SALVAR_CONFIGURACAO_ANALISE = "salvarConfiguracaoAnalise";
-	public static final String URI_RECUPERAR_ULTIMA_COTACAO = "recuperarUltimaCotacao/{idPapel}";	
+	public static final String URI_RECUPERAR_ULTIMA_COTACAO = "recuperarUltimaCotacao/{idPapel}";
 	public static final String URI_ATUALIZAR_HISTORICO_BMF = "atualizarHistoricoBMF";
 	public static final String URI_ATUALIZAR_ATUAL_BMF = "atualizarAtualBMF";
 

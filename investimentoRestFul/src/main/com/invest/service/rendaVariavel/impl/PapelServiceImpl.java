@@ -21,7 +21,29 @@ import com.invest.util.FormatadorUtil;
 
 @Service
 public class PapelServiceImpl implements PapelService {
+	private class CalcularMediaMovelExponecial {
+		private static final int QTD_DIAS = 14;
+		private List<Double> mmeAnteriores;
+
+		private CalcularMediaMovelExponecial() {
+			this.mmeAnteriores = new ArrayList<Double>();
+		}
+
+		public String calcularMMeMaximoMinimo(final Cotacao cotacao) {
+			Double mme = 0.0;
+			final Double valor = cotacao.getFechamento();
+			Double mmeAnterior = 0.0;
+			if (!this.mmeAnteriores.isEmpty()) {
+				mmeAnterior = this.mmeAnteriores.get(this.mmeAnteriores.size() - 1);
+			}
+			mme = (valor - mmeAnterior) * 0.13333333333333333 + mmeAnterior;
+			this.mmeAnteriores.add(mme);
+			return FormatadorUtil.formatarMoedaEN(mme);
+		}
+	}
+
 	private static final Logger logger = LoggerFactory.getLogger(PapelServiceImpl.class);
+
 	@Autowired
 	private PapelRepository papelRepository;
 
@@ -31,56 +53,31 @@ public class PapelServiceImpl implements PapelService {
 	@Autowired
 	private OperacaoEntradaService operacaoEntradaService;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.invest.service.rendaVariavel.PapelService#salvar(com.invest.entidade.
-	 * rendaVariavel.Papel)
-	 */
 	@Override
-	public void salvar(Papel papel) throws InvestimentoBusinessException {
-		logger.debug("salvar");
-		// this.validar(papel);
-		this.papelRepository.save(papel);
+	public Papel ativar(Integer idPapel) throws InvestimentoBusinessException {
+		Papel papel = this.papelRepository.findById(idPapel);
+		papel.setAtivo(Boolean.valueOf(true));
+		this.salvar(papel);
+		return papel;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.invest.service.rendaVariavel.PapelService#findAll()
-	 */
+	@Override
+	public void ativarDesativar(Integer idPapel) throws InvestimentoBusinessException {
+		Papel papel = this.papelRepository.findById(idPapel);
+		papel.setAtivo(!papel.getAtivo());
+		this.salvar(papel);
+	}
+
 	@Override
 	public List<Papel> findAll() {
 		return this.papelRepository.findAllOrderByPapel();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.invest.service.rendaVariavel.PapelService#findAllByAtivo()
-	 */
 	@Override
 	public List<Papel> findAllByAtivo() {
 		return this.papelRepository.findAllByAtivo(Boolean.valueOf(true));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.invest.service.rendaVariavel.PapelService#findById(java.lang.Integer)
-	 */
-	@Override
-	public Papel findById(Integer idPapel) {
-		return this.papelRepository.findById(idPapel);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.invest.service.rendaVariavel.PapelService#findBalancoHoje()
-	 */
 	@Override
 	public List<BalancoCarteiraDTO> findBalancoHoje() throws InvestimentoBusinessException {
 		List<OperacaoEntrada> entradas = this.operacaoEntradaService.findAllOperacaoAtiva();
@@ -106,13 +103,32 @@ public class PapelServiceImpl implements PapelService {
 		return balancos;
 	}
 
+	@Override
+	public Papel findById(Integer idPapel) {
+		return this.papelRepository.findById(idPapel);
+	}
+
+	@Override
+	public List<Papel> findHasOperacao() throws InvestimentoBusinessException {
+		return papelRepository.findHasOperacao();
+	}
+
+	@Override
+	public Papel inativar(Integer idPapel) throws InvestimentoBusinessException {
+		Papel papel = this.papelRepository.findById(idPapel);
+		papel.setAtivo(Boolean.valueOf(false));
+		this.salvar(papel);
+		return papel;
+	}
+
+	@Override
+	public void salvar(Papel papel) throws InvestimentoBusinessException {
+		logger.debug("salvar");
+		// this.validar(papel);
+		this.papelRepository.save(papel);
+	}
+
 	// @Scheduled(cron = "0 0 20 * * ?")
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.invest.service.rendaVariavel.PapelService#schedulerAtualizarCotacao()
-	 */
 	@Override
 	public void schedulerAtualizarCotacao() throws InvestimentoBusinessException {
 		List<Papel> papeis = this.papelRepository.findAllByAtivo(Boolean.valueOf(true));
@@ -127,39 +143,6 @@ public class PapelServiceImpl implements PapelService {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.invest.service.rendaVariavel.PapelService#inativar(java.lang.Integer)
-	 */
-	@Override
-	public Papel inativar(Integer idPapel) throws InvestimentoBusinessException {
-		Papel papel = this.papelRepository.findById(idPapel);
-		papel.setAtivo(Boolean.valueOf(false));
-		this.salvar(papel);
-		return papel;
-	}
-
-	@Override
-	public Papel ativar(Integer idPapel) throws InvestimentoBusinessException {
-		Papel papel = this.papelRepository.findById(idPapel);
-		papel.setAtivo(Boolean.valueOf(true));
-		this.salvar(papel);
-		return papel;
-	}
-
-	@Override
-	public void ativarDesativar(Integer idPapel) throws InvestimentoBusinessException {
-		Papel papel = this.papelRepository.findById(idPapel);
-		papel.setAtivo(!papel.getAtivo());
-		this.salvar(papel);
-	}
-
-	private Double calcularSaldo(OperacaoEntrada entrada, Cotacao cotacao) {
-		return (double) entrada.getQuantidade().intValue() * cotacao.getFechamento();
-	}
-
 	private Double calcularProcentagemLucroPrejuizo(OperacaoEntrada entrada, Cotacao cotacao) {
 		Double valorEntrada = (double) entrada.getPrecoUnitario();
 		Double valorAtual = cotacao.getFechamento();
@@ -169,6 +152,10 @@ public class PapelServiceImpl implements PapelService {
 
 	private Double calcularQtdLucroPrejuizo(OperacaoEntrada entrada, Cotacao cotacao) {
 		return cotacao.getFechamento() - entrada.getPrecoUnitario();
+	}
+
+	private Double calcularSaldo(OperacaoEntrada entrada, Cotacao cotacao) {
+		return (double) entrada.getQuantidade().intValue() * cotacao.getFechamento();
 	}
 
 	private Double calcularTotalInvestimento(OperacaoEntrada entrada) {
@@ -184,27 +171,6 @@ public class PapelServiceImpl implements PapelService {
 				return;
 			}
 			throw new InvestimentoBusinessException("Nome de Empresa j\u00e1 cadastrado");
-		}
-	}
-
-	private class CalcularMediaMovelExponecial {
-		private static final int QTD_DIAS = 14;
-		private List<Double> mmeAnteriores;
-
-		private CalcularMediaMovelExponecial() {
-			this.mmeAnteriores = new ArrayList<Double>();
-		}
-
-		public String calcularMMeMaximoMinimo(final Cotacao cotacao) {
-			Double mme = 0.0;
-			final Double valor = cotacao.getFechamento();
-			Double mmeAnterior = 0.0;
-			if (!this.mmeAnteriores.isEmpty()) {
-				mmeAnterior = this.mmeAnteriores.get(this.mmeAnteriores.size() - 1);
-			}
-			mme = (valor - mmeAnterior) * 0.13333333333333333 + mmeAnterior;
-			this.mmeAnteriores.add(mme);
-			return FormatadorUtil.formatarMoedaEN(mme);
 		}
 	}
 }

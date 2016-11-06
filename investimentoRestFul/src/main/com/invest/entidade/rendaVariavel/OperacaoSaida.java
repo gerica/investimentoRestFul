@@ -53,12 +53,24 @@ public class OperacaoSaida {
 	// @NotNull(message="O valor da quantidade n�o pode ser em branco!")
 	private Integer quantidade;
 
-	@Transient
-	public Double getTotalOperacao() {
-		if ((this.precoUnitario != null) && (this.operacaoEntrada != null) && (this.operacaoEntrada.getQuantidade() != null)) {
-			return Double.valueOf(this.precoUnitario.doubleValue() * this.getQuantidade().intValue()) - this.getDespesa();
-		}
-		return Double.valueOf(0.0D);
+	public Boolean getAtivo() {
+		return this.ativo;
+	}
+
+	public Double getAvaliacaoSaida() {
+		return this.avaliacaoSaida;
+	}
+
+	public Date getData() {
+		return this.data;
+	}
+
+	public Double getDespesa() {
+		return this.despesa;
+	}
+
+	public Integer getId() {
+		return this.id;
 	}
 
 	@Transient
@@ -66,72 +78,61 @@ public class OperacaoSaida {
 		return Double.valueOf(0.0D);
 	}
 
-	public Integer getId() {
-		return this.id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
+	public String getObservacao() {
+		return this.observacao;
 	}
 
 	public OperacaoEntrada getOperacaoEntrada() {
 		return this.operacaoEntrada;
 	}
 
-	public void setOperacaoEntrada(OperacaoEntrada operacaoEntrada) {
-		this.operacaoEntrada = operacaoEntrada;
-	}
-
-	public Date getData() {
-		return this.data;
-	}
-
-	public void setData(Date data) {
-		this.data = data;
-	}
-
 	public Double getPrecoUnitario() {
 		return this.precoUnitario;
 	}
 
-	public void setPrecoUnitario(Double precoUnitario) {
-		this.precoUnitario = precoUnitario;
+	public Integer getQuantidade() {
+		return this.quantidade;
 	}
 
-	public Double getDespesa() {
-		return this.despesa;
-	}
-
-	public void setDespesa(Double despesa) {
-		this.despesa = despesa;
-	}
-
-	public String getObservacao() {
-		return this.observacao;
-	}
-
-	public void setObservacao(String observacao) {
-		this.observacao = observacao;
-	}
-
-	public Double getAvaliacaoSaida() {
-		return this.avaliacaoSaida;
-	}
-
-	public void setAvaliacaoSaida(Double avaliacaoSaida) {
-		this.avaliacaoSaida = avaliacaoSaida;
-	}
-
-	public Boolean getAtivo() {
-		return this.ativo;
+	@Transient
+	public Double getTotalOperacao() {
+		if ((this.precoUnitario != null) && (this.operacaoEntrada != null) && (this.operacaoEntrada.getQuantidade() != null)) {
+			return Double.valueOf(this.precoUnitario.doubleValue() * this.getQuantidade().intValue()) - this.getDespesa();
+		}
+		data.getMonth();
+		return Double.valueOf(0.0D);
 	}
 
 	public void setAtivo(Boolean ativo) {
 		this.ativo = ativo;
 	}
 
-	public Integer getQuantidade() {
-		return this.quantidade;
+	public void setAvaliacaoSaida(Double avaliacaoSaida) {
+		this.avaliacaoSaida = avaliacaoSaida;
+	}
+
+	public void setData(Date data) {
+		this.data = data;
+	}
+
+	public void setDespesa(Double despesa) {
+		this.despesa = despesa;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
+	}
+
+	public void setOperacaoEntrada(OperacaoEntrada operacaoEntrada) {
+		this.operacaoEntrada = operacaoEntrada;
+	}
+
+	public void setPrecoUnitario(Double precoUnitario) {
+		this.precoUnitario = precoUnitario;
 	}
 
 	public void setQuantidade(Integer quantidade) {

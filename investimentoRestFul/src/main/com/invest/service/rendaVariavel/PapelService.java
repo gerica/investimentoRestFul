@@ -27,4 +27,6 @@ public interface PapelService {
 
 	void ativarDesativar(Integer idPapel) throws InvestimentoBusinessException;
 
+	List<Papel> findHasOperacao() throws InvestimentoBusinessException;;
+
 }
