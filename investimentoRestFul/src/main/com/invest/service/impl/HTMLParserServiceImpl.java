@@ -166,7 +166,7 @@ public class HTMLParserServiceImpl implements HTMLParserService {
 
 	public Cotacao lerCotacaoAtual(String papel) throws InvestimentoBusinessException {
 		if ((papel == null) || ("".equals(papel))) {
-			throw new InvestimentoBusinessException("O papel informado � nulo ou vazio.");
+			throw new InvestimentoBusinessException("O papel informado é nulo ou vazio.");
 		}
 		logger.info("Lendo url para obter cotação do papel: " + papel);
 
@@ -192,8 +192,9 @@ public class HTMLParserServiceImpl implements HTMLParserService {
 					// abertura
 					cotacao.setAbertura(Double.valueOf(Double.parseDouble(tdCotacoes.get(i).text().replace(',', '.'))));
 				} else if (i == 7) {
-					cotacao.setMaxima(Double
-							.valueOf(Double.parseDouble(tdCotacoes.get(i).text().substring(8, 13).replace(',', '.'))));
+					cotacao.setMaxima(Double.valueOf(Double.parseDouble(tdCotacoes.get(i).text()
+							.substring(tdCotacoes.get(i).text().length() - 5, tdCotacoes.get(i).text().length())
+							.replace(',', '.'))));
 					cotacao.setMinima(Double
 							.valueOf(Double.parseDouble(tdCotacoes.get(i).text().substring(0, 5).replace(',', '.'))));
 				}
@@ -210,8 +211,8 @@ public class HTMLParserServiceImpl implements HTMLParserService {
 	public static void main(String[] args) {
 		HTMLParserService p = new HTMLParserServiceImpl();
 		try {
-//			p.lerCotacoesHistorica("ABEV3");
-			 p.lerCotacaoAtual("ALPA4");
+			// p.lerCotacoesHistorica("ABEV3");
+			p.lerCotacaoAtual("ALPA4");
 			// p.lerCotacaoAtual("HGTX3");
 		} catch (InvestimentoBusinessException e) {
 			e.printStackTrace();

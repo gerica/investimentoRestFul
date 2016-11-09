@@ -1,5 +1,7 @@
 package com.invest.controller;
 
+import java.util.List;
+
 import javax.annotation.security.RolesAllowed;
 
 import org.slf4j.Logger;
@@ -20,6 +22,7 @@ import com.invest.entidade.rendaVariavel.Cotacao;
 import com.invest.entidade.rendaVariavel.Papel;
 import com.invest.execao.InvestimentoBusinessException;
 import com.invest.service.rendaVariavel.CotacaoService;
+import com.invest.service.rendaVariavel.dto.CotacaoGraficoDTO;
 
 @RestController
 public class CotacaoRestController {
@@ -78,6 +81,24 @@ public class CotacaoRestController {
 		}
 
 		SuccessResponse success = new SuccessResponse("Operação realizada com sucesso", cotacao);
+		return new ResponseEntity<SuccessResponse>(success, HttpStatus.OK);
+
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = UriConstInvestimento.URI_RECUPERAR_COTACAO_POR_PAPEL)
+	@RolesAllowed({ RoleEnum.Constants.ROLE_ADMIN, RoleEnum.Constants.ROLE_CONVIDADO })
+	@ResponseBody
+	public ResponseEntity<?> recuperarCotacoesPorPapel(@PathVariable(value = "idPapel") Integer idPapel) {
+		logger.info("CotacaoRestController.recuperarCotacoesPorPapel()");
+		List<CotacaoGraficoDTO> result = null;
+		try {
+			result = cotacaoService.findCotacaoPorPapel(idPapel);
+		} catch (InvestimentoBusinessException e) {
+			ErrorResponse error = new ErrorResponse(e.getMessage());
+			return new ResponseEntity<ErrorResponse>(error, HttpStatus.BAD_REQUEST);
+		}
+
+		SuccessResponse success = new SuccessResponse("Operação realizada com sucesso", result);
 		return new ResponseEntity<SuccessResponse>(success, HttpStatus.OK);
 
 	}

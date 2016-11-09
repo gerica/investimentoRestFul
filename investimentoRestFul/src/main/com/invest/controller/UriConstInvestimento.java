@@ -30,8 +30,11 @@ public abstract class UriConstInvestimento {
 	// Funcionalidades de CONFIGURAÇÃO ANÁLISE COTAÇÃO
 	public static final String URI_RECUPERAR_CONFIGURACAO_ANALISE = "recuperarConfiguracaoAnalise";
 	public static final String URI_SALVAR_CONFIGURACAO_ANALISE = "salvarConfiguracaoAnalise";
+	
+	// Funcionalidades de COTAÇÃO
 	public static final String URI_RECUPERAR_ULTIMA_COTACAO = "recuperarUltimaCotacao/{idPapel}";
 	public static final String URI_ATUALIZAR_HISTORICO_BMF = "atualizarHistoricoBMF";
 	public static final String URI_ATUALIZAR_ATUAL_BMF = "atualizarAtualBMF";
+	public static final String URI_RECUPERAR_COTACAO_POR_PAPEL = "recuperarCotacoesPorPapel/{idPapel}";
 
 }

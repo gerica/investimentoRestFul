@@ -3,6 +3,7 @@ package com.invest.repository.rendaVariavel;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
@@ -20,4 +21,6 @@ public abstract interface CotacaoRepository extends PagingAndSortingRepository<C
 
 	@Query("SELECT distinct(c) FROM Cotacao c WHERE c.data IN (SELECT max(c1.data) FROM Cotacao c1 WHERE c1.papel = ?2) and c.papel = ?1")
 	public abstract Cotacao findUltimaCotacaoByPapel(Papel paramPapel1, Papel paramPapel2);
+
+	public abstract List<Cotacao> findByPapelOrderByDataDesc(Papel papel, Pageable pageable);
 }

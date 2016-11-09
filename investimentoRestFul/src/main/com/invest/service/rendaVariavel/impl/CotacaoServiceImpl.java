@@ -8,6 +8,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.invest.entidade.rendaVariavel.ConfiguracaoAnaliseCotacoes;
@@ -19,115 +20,11 @@ import com.invest.service.HTMLParserService;
 import com.invest.service.rendaVariavel.ConfiguracaoAnaliseCotacoesService;
 import com.invest.service.rendaVariavel.CotacaoService;
 import com.invest.service.rendaVariavel.PapelService;
+import com.invest.service.rendaVariavel.dto.CotacaoGraficoDTO;
 import com.invest.service.rendaVariavel.dto.CotacaoTendenciaDTO;
 
 @Service
 public class CotacaoServiceImpl implements CotacaoService {
-	private static final Logger logger = LoggerFactory.getLogger(CotacaoServiceImpl.class);
-	@Autowired
-	private CotacaoRepository cotacaoRepository;
-
-	@Autowired
-	private HTMLParserService htmlParser;
-
-	@Autowired
-	private PapelService papelService;
-
-	@Autowired
-	private ConfiguracaoAnaliseCotacoesService analiseCotacoesService;
-
-	@Override
-	public List<Cotacao> findAllByPapelOrderByDataDesc(Papel papel) {
-		return this.cotacaoRepository.findAllByPapelOrderByDataDesc(papel);
-	}
-
-	@Override
-	public List<CotacaoTendenciaDTO> analizarAltaStopLoss(Papel papel) throws InvestimentoBusinessException {
-		ConfiguracaoAnaliseCotacoes configuracao = this.analiseCotacoesService.findByUsuario();
-		List<CotacaoTendenciaDTO> tendencias = new ArrayList<CotacaoTendenciaDTO>();
-		List<Cotacao> cotacoes = this.cotacaoRepository.findAllByPapelOrderByDataAsc(papel);
-		if (!cotacoes.isEmpty()) {
-			LinkedList<Cotacao> cotacaoTemp = new LinkedList();
-
-			int indice = 0;
-			CalcularTendenciaAlta alta = new CalcularTendenciaAlta(configuracao.getQtdDiasCalculoStopLoss(),
-					configuracao.getRiscoStopLoss());
-			for (Cotacao cotacao : cotacoes) {
-				CotacaoTendenciaDTO cotacaoTendencia = new CotacaoTendenciaDTO();
-				cotacaoTemp.add(cotacao);
-				tendencias.add(cotacaoTendencia);
-				indice++;
-				cotacaoTendencia.setId(cotacao.getId());
-				cotacaoTendencia.setData(cotacao.getData());
-				cotacaoTendencia.setRuptura(alta.calularRupturaBaixa(cotacaoTemp, indice));
-				cotacaoTendencia.setSoma(alta.calcularSoma(tendencias, indice));
-				cotacaoTendencia.setRompeu(Boolean.valueOf(alta.verificarRuptura(cotacaoTemp, indice)));
-				cotacaoTendencia.setNumeroRupturas(alta.calcularNumeroRompmento(tendencias, indice));
-				cotacaoTendencia.setMediaRupturas(alta.calcularMediaRupturas(cotacaoTendencia));
-				cotacaoTendencia.setStop(alta.calcularStopLoss(cotacaoTendencia, cotacao));
-				cotacaoTendencia.setValorProtegido(alta.calcularValorProtegidoLoss(tendencias, indice));
-			}
-			alta.ordernarByDataDesc(tendencias);
-			tendencias = alta.reduzierQuantidadeCotacao(tendencias,
-					configuracao.getQtdDiasApresentarCotacoes().intValue());
-		}
-		return tendencias;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.invest.service.rendaVariavel.impl.CotacaoService#analizarAltaStopWin(
-	 * com.invest.entidade.rendaVariavel.Papel)
-	 */
-	@Override
-	public List<CotacaoTendenciaDTO> analizarAltaStopWin(Papel papel) throws InvestimentoBusinessException {
-		ConfiguracaoAnaliseCotacoes configuracao = this.analiseCotacoesService.findByUsuario();
-		List<CotacaoTendenciaDTO> tendencias = new ArrayList<CotacaoTendenciaDTO>();
-		List<Cotacao> cotacoes = this.cotacaoRepository.findAllByPapelOrderByDataAsc(papel);
-		if (!cotacoes.isEmpty()) {
-			LinkedList<Cotacao> cotacaoTemp = new LinkedList();
-
-			int indice = 0;
-			CalcularTendenciaAlta alta = new CalcularTendenciaAlta(configuracao.getQtdDiasCalculoStopWin(),
-					configuracao.getRiscoStopWin());
-			for (Cotacao cotacao : cotacoes) {
-				CotacaoTendenciaDTO cotacaoTendencia = new CotacaoTendenciaDTO();
-				cotacaoTemp.add(cotacao);
-				tendencias.add(cotacaoTendencia);
-				indice++;
-				cotacaoTendencia.setId(cotacao.getId());
-				cotacaoTendencia.setData(cotacao.getData());
-				cotacaoTendencia.setRuptura(alta.calularRupturaBaixa(cotacaoTemp, indice));
-				cotacaoTendencia.setSoma(alta.calcularSoma(tendencias, indice));
-				cotacaoTendencia.setRompeu(Boolean.valueOf(alta.verificarRuptura(cotacaoTemp, indice)));
-				cotacaoTendencia.setNumeroRupturas(alta.calcularNumeroRompmento(tendencias, indice));
-				cotacaoTendencia.setMediaRupturas(alta.calcularMediaRupturas(cotacaoTendencia));
-				cotacaoTendencia.setWin(alta.calcularStopWin(cotacaoTendencia, cotacao));
-				cotacaoTendencia.setValorProtegido(alta.calcularValorProtegidoWin(tendencias, indice));
-			}
-			alta.ordernarByDataDesc(tendencias);
-			tendencias = alta.reduzierQuantidadeCotacao(tendencias,
-					configuracao.getQtdDiasApresentarCotacoes().intValue());
-		}
-		return tendencias;
-	}
-
-	/*
-	 * 
-	 * @see com.invest.service.rendaVariavel.impl.CotacaoService#
-	 * getUltimoValorTendencia(com.invest.entidade.rendaVariavel.Papel)
-	 */
-	@Override
-	public CotacaoTendenciaDTO getUltimoValorTendencia(Papel papel) throws InvestimentoBusinessException {
-		List<CotacaoTendenciaDTO> list = analizarAltaStopLoss(papel);
-		if (!list.isEmpty()) {
-			return (CotacaoTendenciaDTO) list.iterator().next();
-		}
-		return null;
-	}
-
 	private class CalcularTendenciaAlta {
 		private Integer diasCalculo;
 		private Integer risco;
@@ -137,15 +34,13 @@ public class CotacaoServiceImpl implements CotacaoService {
 			this.risco = risco;
 		}
 
-		private Double calularRupturaBaixa(LinkedList<Cotacao> cotacaos, int indice) {
-			if (cotacaos.size() > 1) {
-				Cotacao atual = (Cotacao) cotacaos.get(indice - 1);
-				Cotacao anterior = (Cotacao) cotacaos.get(indice - 2);
-				if (anterior.getMinima().doubleValue() > atual.getMinima().doubleValue()) {
-					return Double.valueOf(anterior.getMinima().doubleValue() - atual.getMinima().doubleValue());
-				}
-			}
-			return Double.valueOf(0.0D);
+		@SuppressWarnings("unchecked")
+		public void ordernarByDataDesc(List<CotacaoTendenciaDTO> tendencias) {
+			// Collections.sort(tendencias, new Comparator() {
+			// public int compare(CotacaoTendencia o1, CotacaoTendencia o2) {
+			// return o2.getData().compareTo(o1.getData());
+			// }
+			// });
 		}
 
 		public List<CotacaoTendenciaDTO> reduzierQuantidadeCotacao(List<CotacaoTendenciaDTO> tendencias, int qtd) {
@@ -158,25 +53,13 @@ public class CotacaoServiceImpl implements CotacaoService {
 			return result;
 		}
 
-		private Double calcularSoma(List<CotacaoTendenciaDTO> tendencias, int indice) {
-			double soma = 0.0D;
-			if (tendencias.size() >= this.diasCalculo.intValue()) {
-				for (int i = indice - 1; i >= indice - this.diasCalculo.intValue(); i--) {
-					soma += ((CotacaoTendenciaDTO) tendencias.get(i)).getRuptura().doubleValue();
-				}
+		private Double calcularMediaRupturas(CotacaoTendenciaDTO cotacaoTendencia) {
+			if ((cotacaoTendencia.getSoma().doubleValue() > 0.0D)
+					&& (cotacaoTendencia.getNumeroRupturas().intValue() > 0)) {
+				return Double.valueOf(
+						cotacaoTendencia.getSoma().doubleValue() / cotacaoTendencia.getNumeroRupturas().intValue());
 			}
-			return Double.valueOf(soma);
-		}
-
-		private boolean verificarRuptura(List<Cotacao> cotacaos, int indice) {
-			if (cotacaos.size() > 1) {
-				Cotacao atual = (Cotacao) cotacaos.get(indice - 1);
-				Cotacao anterior = (Cotacao) cotacaos.get(indice - 2);
-				if (atual.getMinima().doubleValue() > anterior.getMinima().doubleValue()) {
-					return true;
-				}
-			}
-			return false;
+			return Double.valueOf(0.0D);
 		}
 
 		private Integer calcularNumeroRompmento(List<CotacaoTendenciaDTO> tendencias, int indice) {
@@ -191,13 +74,14 @@ public class CotacaoServiceImpl implements CotacaoService {
 			return soma;
 		}
 
-		private Double calcularMediaRupturas(CotacaoTendenciaDTO cotacaoTendencia) {
-			if ((cotacaoTendencia.getSoma().doubleValue() > 0.0D)
-					&& (cotacaoTendencia.getNumeroRupturas().intValue() > 0)) {
-				return Double.valueOf(
-						cotacaoTendencia.getSoma().doubleValue() / cotacaoTendencia.getNumeroRupturas().intValue());
+		private Double calcularSoma(List<CotacaoTendenciaDTO> tendencias, int indice) {
+			double soma = 0.0D;
+			if (tendencias.size() >= this.diasCalculo.intValue()) {
+				for (int i = indice - 1; i >= indice - this.diasCalculo.intValue(); i--) {
+					soma += ((CotacaoTendenciaDTO) tendencias.get(i)).getRuptura().doubleValue();
+				}
 			}
-			return Double.valueOf(0.0D);
+			return Double.valueOf(soma);
 		}
 
 		private Double calcularStopLoss(CotacaoTendenciaDTO cotacaoTendencia, Cotacao cotacao) {
@@ -252,14 +136,216 @@ public class CotacaoServiceImpl implements CotacaoService {
 			return Double.valueOf(0.0D);
 		}
 
-		@SuppressWarnings("unchecked")
-		public void ordernarByDataDesc(List<CotacaoTendenciaDTO> tendencias) {
-			// Collections.sort(tendencias, new Comparator() {
-			// public int compare(CotacaoTendencia o1, CotacaoTendencia o2) {
-			// return o2.getData().compareTo(o1.getData());
-			// }
-			// });
+		private Double calularRupturaBaixa(LinkedList<Cotacao> cotacaos, int indice) {
+			if (cotacaos.size() > 1) {
+				Cotacao atual = (Cotacao) cotacaos.get(indice - 1);
+				Cotacao anterior = (Cotacao) cotacaos.get(indice - 2);
+				if (anterior.getMinima().doubleValue() > atual.getMinima().doubleValue()) {
+					return Double.valueOf(anterior.getMinima().doubleValue() - atual.getMinima().doubleValue());
+				}
+			}
+			return Double.valueOf(0.0D);
 		}
+
+		private boolean verificarRuptura(List<Cotacao> cotacaos, int indice) {
+			if (cotacaos.size() > 1) {
+				Cotacao atual = (Cotacao) cotacaos.get(indice - 1);
+				Cotacao anterior = (Cotacao) cotacaos.get(indice - 2);
+				if (atual.getMinima().doubleValue() > anterior.getMinima().doubleValue()) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+
+	private static final Logger logger = LoggerFactory.getLogger(CotacaoServiceImpl.class);
+
+	@Autowired
+	private CotacaoRepository cotacaoRepository;
+
+	@Autowired
+	private HTMLParserService htmlParser;
+
+	@Autowired
+	private PapelService papelService;
+
+	@Autowired
+	private ConfiguracaoAnaliseCotacoesService analiseCotacoesService;
+
+	@Override
+	public List<CotacaoTendenciaDTO> analizarAltaStopLoss(Papel papel) throws InvestimentoBusinessException {
+		ConfiguracaoAnaliseCotacoes configuracao = this.analiseCotacoesService.findByUsuario();
+		List<CotacaoTendenciaDTO> tendencias = new ArrayList<CotacaoTendenciaDTO>();
+		List<Cotacao> cotacoes = this.cotacaoRepository.findAllByPapelOrderByDataAsc(papel);
+		if (!cotacoes.isEmpty()) {
+			LinkedList<Cotacao> cotacaoTemp = new LinkedList();
+
+			int indice = 0;
+			CalcularTendenciaAlta alta = new CalcularTendenciaAlta(configuracao.getQtdDiasCalculoStopLoss(),
+					configuracao.getRiscoStopLoss());
+			for (Cotacao cotacao : cotacoes) {
+				CotacaoTendenciaDTO cotacaoTendencia = new CotacaoTendenciaDTO();
+				cotacaoTemp.add(cotacao);
+				tendencias.add(cotacaoTendencia);
+				indice++;
+				cotacaoTendencia.setId(cotacao.getId());
+				cotacaoTendencia.setData(cotacao.getData());
+				cotacaoTendencia.setRuptura(alta.calularRupturaBaixa(cotacaoTemp, indice));
+				cotacaoTendencia.setSoma(alta.calcularSoma(tendencias, indice));
+				cotacaoTendencia.setRompeu(Boolean.valueOf(alta.verificarRuptura(cotacaoTemp, indice)));
+				cotacaoTendencia.setNumeroRupturas(alta.calcularNumeroRompmento(tendencias, indice));
+				cotacaoTendencia.setMediaRupturas(alta.calcularMediaRupturas(cotacaoTendencia));
+				cotacaoTendencia.setStop(alta.calcularStopLoss(cotacaoTendencia, cotacao));
+				cotacaoTendencia.setValorProtegido(alta.calcularValorProtegidoLoss(tendencias, indice));
+			}
+			alta.ordernarByDataDesc(tendencias);
+			tendencias = alta.reduzierQuantidadeCotacao(tendencias,
+					configuracao.getQtdDiasApresentarCotacoes().intValue());
+		}
+		return tendencias;
+	}
+
+	@Override
+	public List<CotacaoTendenciaDTO> analizarAltaStopWin(Papel papel) throws InvestimentoBusinessException {
+		ConfiguracaoAnaliseCotacoes configuracao = this.analiseCotacoesService.findByUsuario();
+		List<CotacaoTendenciaDTO> tendencias = new ArrayList<CotacaoTendenciaDTO>();
+		List<Cotacao> cotacoes = this.cotacaoRepository.findAllByPapelOrderByDataAsc(papel);
+		if (!cotacoes.isEmpty()) {
+			LinkedList<Cotacao> cotacaoTemp = new LinkedList();
+
+			int indice = 0;
+			CalcularTendenciaAlta alta = new CalcularTendenciaAlta(configuracao.getQtdDiasCalculoStopWin(),
+					configuracao.getRiscoStopWin());
+			for (Cotacao cotacao : cotacoes) {
+				CotacaoTendenciaDTO cotacaoTendencia = new CotacaoTendenciaDTO();
+				cotacaoTemp.add(cotacao);
+				tendencias.add(cotacaoTendencia);
+				indice++;
+				cotacaoTendencia.setId(cotacao.getId());
+				cotacaoTendencia.setData(cotacao.getData());
+				cotacaoTendencia.setRuptura(alta.calularRupturaBaixa(cotacaoTemp, indice));
+				cotacaoTendencia.setSoma(alta.calcularSoma(tendencias, indice));
+				cotacaoTendencia.setRompeu(Boolean.valueOf(alta.verificarRuptura(cotacaoTemp, indice)));
+				cotacaoTendencia.setNumeroRupturas(alta.calcularNumeroRompmento(tendencias, indice));
+				cotacaoTendencia.setMediaRupturas(alta.calcularMediaRupturas(cotacaoTendencia));
+				cotacaoTendencia.setWin(alta.calcularStopWin(cotacaoTendencia, cotacao));
+				cotacaoTendencia.setValorProtegido(alta.calcularValorProtegidoWin(tendencias, indice));
+			}
+			alta.ordernarByDataDesc(tendencias);
+			tendencias = alta.reduzierQuantidadeCotacao(tendencias,
+					configuracao.getQtdDiasApresentarCotacoes().intValue());
+		}
+		return tendencias;
+	}
+
+	@Override
+	public void atualizarAtualBMF() throws InvestimentoBusinessException {
+		List<Papel> papeis = papelService.findAllByAtivo();
+		for (Papel papel : papeis) {
+			Cotacao cotacao = this.htmlParser.lerCotacaoAtual(papel.getPapel());
+			if (cotacao != null) {
+				Cotacao cotacaoBanco = findByDataAndPapel(cotacao.getData(), papel);
+				if (cotacaoBanco != null) {
+					cotacaoBanco.setAbertura(cotacao.getAbertura());
+					cotacaoBanco.setFechamento(cotacao.getFechamento());
+					cotacaoBanco.setMaxima(cotacao.getMaxima());
+					cotacaoBanco.setMinima(cotacao.getMinima());
+
+					salvar(cotacao);
+				} else {
+					cotacao.setPapel(papel);
+					salvar(cotacao);
+
+				}
+			}
+		}
+	}
+
+	public void atualizarAtualBMF(Papel papel) throws InvestimentoBusinessException {
+
+		Cotacao cotacao = this.htmlParser.lerCotacaoAtual(papel.getPapel());
+		if (cotacao != null) {
+			cotacao.setPapel(papel);
+			salvar(cotacao);
+		}
+
+	}
+
+	@Override
+	public void atualizarHistoricoBMF() throws InvestimentoBusinessException {
+		List<Papel> papeis = papelService.findAllByAtivo();
+		for (Papel papel : papeis) {
+			List<Cotacao> cotacoes = this.htmlParser.lerCotacoesHistorica(papel.getPapel());
+			if (!cotacoes.isEmpty()) {
+				for (Cotacao c : cotacoes) {
+					c.setPapel(papel);
+					salvar(c);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void atualizarHistoricoBMF(Papel papel) throws InvestimentoBusinessException {
+		List<Cotacao> cotacoes = this.htmlParser.lerCotacoesHistorica(papel.getPapel());
+		if (!cotacoes.isEmpty()) {
+			for (Cotacao c : cotacoes) {
+				c.setPapel(papel);
+				salvar(c);
+			}
+		}
+
+	}
+
+	@Override
+	public List<Cotacao> findAllByPapelOrderByDataDesc(Papel papel) {
+		return this.cotacaoRepository.findAllByPapelOrderByDataDesc(papel);
+	}
+
+	@Override
+	public Cotacao findByDataAndPapel(Date data, Papel papel) throws InvestimentoBusinessException {
+		List<Cotacao> cotacoes = this.cotacaoRepository.findByDataAndPapel(data, papel);
+		if (cotacoes.size() > 1) {
+			throw new InvestimentoBusinessException("Existe duas ou mais cota��es cadastada para esse dia: ");
+		}
+		if (cotacoes.size() == 1) {
+			return (Cotacao) cotacoes.get(0);
+		}
+		return null;
+	}
+
+	@Override
+	public List<CotacaoGraficoDTO> findCotacaoPorPapel(Integer idPapel) throws InvestimentoBusinessException {
+		ConfiguracaoAnaliseCotacoes configuracao = this.analiseCotacoesService.findByUsuario();
+		Papel papel = new Papel();
+		papel.setId(idPapel);
+		List<Cotacao> listCotacao = cotacaoRepository.findByPapelOrderByDataDesc(papel,
+				new PageRequest(0, configuracao.getQtdDiasApresentarCotacoes()));
+
+		CotacaoGraficoDTO dto = null;
+		List<CotacaoGraficoDTO> result = new ArrayList<CotacaoGraficoDTO>();
+		for (Cotacao cotacao : listCotacao) {
+			dto = new CotacaoGraficoDTO();
+			dto.setData(cotacao.getData());
+			dto.setFechamento(cotacao.getFechamento());
+			result.add(dto);
+		}
+		return result;
+	}
+
+	@Override
+	public Cotacao findUltimaCotacaoByPapel(Papel papel) {
+		return this.cotacaoRepository.findUltimaCotacaoByPapel(papel, papel);
+	}
+
+	@Override
+	public CotacaoTendenciaDTO getUltimoValorTendencia(Papel papel) throws InvestimentoBusinessException {
+		List<CotacaoTendenciaDTO> list = analizarAltaStopLoss(papel);
+		if (!list.isEmpty()) {
+			return (CotacaoTendenciaDTO) list.iterator().next();
+		}
+		return null;
 	}
 
 	private void salvar(Cotacao cotacao) throws InvestimentoBusinessException {
@@ -290,70 +376,5 @@ public class CotacaoServiceImpl implements CotacaoService {
 		// "Cotacao já cadastrada para essa data: " +
 		// dateFormat.format(cotacao.getData()));
 		// }
-	}
-
-	@Override
-	public Cotacao findByDataAndPapel(Date data, Papel papel) throws InvestimentoBusinessException {
-		List<Cotacao> cotacoes = this.cotacaoRepository.findByDataAndPapel(data, papel);
-		if (cotacoes.size() > 1) {
-			throw new InvestimentoBusinessException("Existe duas ou mais cota��es cadastada para esse dia: ");
-		}
-		if (cotacoes.size() == 1) {
-			return (Cotacao) cotacoes.get(0);
-		}
-		return null;
-	}
-
-	@Override
-	public void atualizarHistoricoBMF() throws InvestimentoBusinessException {
-		List<Papel> papeis = papelService.findAllByAtivo();
-		for (Papel papel : papeis) {
-			List<Cotacao> cotacoes = this.htmlParser.lerCotacoesHistorica(papel.getPapel());
-			if (!cotacoes.isEmpty()) {
-				for (Cotacao c : cotacoes) {
-					c.setPapel(papel);
-					salvar(c);
-				}
-			}
-		}
-	}
-
-	@Override
-	public void atualizarHistoricoBMF(Papel papel) throws InvestimentoBusinessException {
-		List<Cotacao> cotacoes = this.htmlParser.lerCotacoesHistorica(papel.getPapel());
-		if (!cotacoes.isEmpty()) {
-			for (Cotacao c : cotacoes) {
-				c.setPapel(papel);
-				salvar(c);
-			}
-		}
-
-	}
-
-	@Override
-	public void atualizarAtualBMF() throws InvestimentoBusinessException {
-		List<Papel> papeis = papelService.findAllByAtivo();
-		for (Papel papel : papeis) {
-			Cotacao cotacao = this.htmlParser.lerCotacaoAtual(papel.getPapel());
-			if (cotacao != null) {
-				cotacao.setPapel(papel);
-				salvar(cotacao);
-			}
-		}
-	}
-
-	public void atualizarAtualBMF(Papel papel) throws InvestimentoBusinessException {
-
-		Cotacao cotacao = this.htmlParser.lerCotacaoAtual(papel.getPapel());
-		if (cotacao != null) {
-			cotacao.setPapel(papel);
-			salvar(cotacao);
-		}
-
-	}
-
-	@Override
-	public Cotacao findUltimaCotacaoByPapel(Papel papel) {
-		return this.cotacaoRepository.findUltimaCotacaoByPapel(papel, papel);
 	}
 }
