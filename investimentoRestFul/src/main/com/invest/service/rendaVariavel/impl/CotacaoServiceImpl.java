@@ -1,6 +1,7 @@
 package com.invest.service.rendaVariavel.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,15 +14,19 @@ import org.springframework.stereotype.Service;
 
 import com.invest.entidade.rendaVariavel.ConfiguracaoAnaliseCotacoes;
 import com.invest.entidade.rendaVariavel.Cotacao;
+import com.invest.entidade.rendaVariavel.OperacaoEntrada;
 import com.invest.entidade.rendaVariavel.Papel;
 import com.invest.execao.InvestimentoBusinessException;
 import com.invest.repository.rendaVariavel.CotacaoRepository;
 import com.invest.service.HTMLParserService;
 import com.invest.service.rendaVariavel.ConfiguracaoAnaliseCotacoesService;
 import com.invest.service.rendaVariavel.CotacaoService;
+import com.invest.service.rendaVariavel.OperacaoEntradaService;
+import com.invest.service.rendaVariavel.OperacaoSaidaService;
 import com.invest.service.rendaVariavel.PapelService;
 import com.invest.service.rendaVariavel.dto.CotacaoGraficoDTO;
 import com.invest.service.rendaVariavel.dto.CotacaoTendenciaDTO;
+import com.invest.service.rendaVariavel.dto.HistoricoCarteiraDTO;
 
 @Service
 public class CotacaoServiceImpl implements CotacaoService {
@@ -173,6 +178,12 @@ public class CotacaoServiceImpl implements CotacaoService {
 	@Autowired
 	private ConfiguracaoAnaliseCotacoesService analiseCotacoesService;
 
+	@Autowired
+	private OperacaoEntradaService operacaoEntradaService;
+
+	@Autowired
+	private OperacaoSaidaService operacaoSaidaService;
+
 	@Override
 	public List<CotacaoTendenciaDTO> analizarAltaStopLoss(Papel papel) throws InvestimentoBusinessException {
 		ConfiguracaoAnaliseCotacoes configuracao = this.analiseCotacoesService.findByUsuario();
@@ -252,7 +263,7 @@ public class CotacaoServiceImpl implements CotacaoService {
 					cotacaoBanco.setMaxima(cotacao.getMaxima());
 					cotacaoBanco.setMinima(cotacao.getMinima());
 
-					salvar(cotacao);
+					salvar(cotacaoBanco);
 				} else {
 					cotacao.setPapel(papel);
 					salvar(cotacao);
@@ -266,8 +277,20 @@ public class CotacaoServiceImpl implements CotacaoService {
 
 		Cotacao cotacao = this.htmlParser.lerCotacaoAtual(papel.getPapel());
 		if (cotacao != null) {
-			cotacao.setPapel(papel);
-			salvar(cotacao);
+			Cotacao cotacaoBanco = findByDataAndPapel(cotacao.getData(), papel);
+			if (cotacaoBanco != null) {
+				cotacaoBanco.setAbertura(cotacao.getAbertura());
+				cotacaoBanco.setFechamento(cotacao.getFechamento());
+				cotacaoBanco.setMaxima(cotacao.getMaxima());
+				cotacaoBanco.setMinima(cotacao.getMinima());
+
+				salvar(cotacaoBanco);
+			} else {
+				cotacao.setPapel(papel);
+				salvar(cotacao);
+
+			}
+
 		}
 
 	}
@@ -278,9 +301,23 @@ public class CotacaoServiceImpl implements CotacaoService {
 		for (Papel papel : papeis) {
 			List<Cotacao> cotacoes = this.htmlParser.lerCotacoesHistorica(papel.getPapel());
 			if (!cotacoes.isEmpty()) {
-				for (Cotacao c : cotacoes) {
-					c.setPapel(papel);
-					salvar(c);
+				for (Cotacao cotacao : cotacoes) {
+					// c.setPapel(papel);
+					// salvar(c);
+					Cotacao cotacaoBanco = findByDataAndPapel(cotacao.getData(), papel);
+					if (cotacaoBanco != null) {
+						cotacaoBanco.setAbertura(cotacao.getAbertura());
+						cotacaoBanco.setFechamento(cotacao.getFechamento());
+						cotacaoBanco.setMaxima(cotacao.getMaxima());
+						cotacaoBanco.setMinima(cotacao.getMinima());
+
+						salvar(cotacaoBanco);
+					} else {
+						cotacao.setPapel(papel);
+						salvar(cotacao);
+
+					}
+
 				}
 			}
 		}
@@ -290,9 +327,21 @@ public class CotacaoServiceImpl implements CotacaoService {
 	public void atualizarHistoricoBMF(Papel papel) throws InvestimentoBusinessException {
 		List<Cotacao> cotacoes = this.htmlParser.lerCotacoesHistorica(papel.getPapel());
 		if (!cotacoes.isEmpty()) {
-			for (Cotacao c : cotacoes) {
-				c.setPapel(papel);
-				salvar(c);
+			for (Cotacao cotacao : cotacoes) {
+				Cotacao cotacaoBanco = findByDataAndPapel(cotacao.getData(), papel);
+				if (cotacaoBanco != null) {
+					cotacaoBanco.setAbertura(cotacao.getAbertura());
+					cotacaoBanco.setFechamento(cotacao.getFechamento());
+					cotacaoBanco.setMaxima(cotacao.getMaxima());
+					cotacaoBanco.setMinima(cotacao.getMinima());
+
+					salvar(cotacaoBanco);
+				} else {
+					cotacao.setPapel(papel);
+					salvar(cotacao);
+
+				}
+
 			}
 		}
 
@@ -332,6 +381,56 @@ public class CotacaoServiceImpl implements CotacaoService {
 			result.add(dto);
 		}
 		return result;
+	}
+
+	@Override
+	public List<HistoricoCarteiraDTO> findLucroPrejuizo() throws InvestimentoBusinessException {
+		ConfiguracaoAnaliseCotacoes configuracao = this.analiseCotacoesService.findByUsuario();
+		List<HistoricoCarteiraDTO> result = new ArrayList<HistoricoCarteiraDTO>();
+
+		List<OperacaoEntrada> operacoesEntrada = new ArrayList<OperacaoEntrada>();
+		List<Cotacao> cotacoes = null;
+		HistoricoCarteiraDTO dto = null;
+
+		for (int i = configuracao.getQtdDiasApresentarCotacoes(); i >= 0; i--) {
+			Calendar c = Calendar.getInstance();
+			c.add(Calendar.DAY_OF_MONTH, -i);
+			c.set(Calendar.HOUR_OF_DAY, 0);
+			c.set(Calendar.MINUTE, 0);
+			c.set(Calendar.SECOND, 0);
+			c.set(Calendar.MILLISECOND, 0);
+
+			operacoesEntrada.addAll(operacaoEntradaService.findByData(c.getTime()));
+
+			for (OperacaoEntrada operacaoEntrada : operacoesEntrada) {
+
+				cotacoes = cotacaoRepository.findByPapelAndData(operacaoEntrada.getPapel(), c.getTime());
+				if (cotacoes.size() > 0) {
+					Cotacao cotacao = cotacoes.get(0);
+					
+					if (dto == null || !dto.getData().equals(c.getTime())) {
+						dto = new HistoricoCarteiraDTO();
+						dto.setData(c.getTime());
+					}
+					
+//						lucroPrejuiso += calcularLucroPrejuizo(operacaoEntrada, cotacao);
+						dto.setLucroPrejuizo(dto.getLucroPrejuizo() + calcularLucroPrejuizo(operacaoEntrada, cotacao));
+					
+
+//					dto.setLucroPrejuizo(dto.getLucroPrejuizo() + lucroPrejuiso);
+					result.add(dto);
+				}
+
+			}
+		}
+
+		return result;
+	}
+
+	private Double calcularLucroPrejuizo(OperacaoEntrada operacaoEntrada, Cotacao cotacao) {
+		double diferenca = cotacao.getFechamento() - operacaoEntrada.getPrecoUnitario();
+
+		return (diferenca * 100) / operacaoEntrada.getPrecoUnitario();
 	}
 
 	@Override

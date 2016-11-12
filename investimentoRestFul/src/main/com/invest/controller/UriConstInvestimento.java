@@ -36,5 +36,6 @@ public abstract class UriConstInvestimento {
 	public static final String URI_ATUALIZAR_HISTORICO_BMF = "atualizarHistoricoBMF";
 	public static final String URI_ATUALIZAR_ATUAL_BMF = "atualizarAtualBMF";
 	public static final String URI_RECUPERAR_COTACAO_POR_PAPEL = "recuperarCotacoesPorPapel/{idPapel}";
+	public static final String URI_RECUPERAR_BALANCO_CARTEIRA = "recuperarBalancoCarteira";
 
 }

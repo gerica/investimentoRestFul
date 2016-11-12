@@ -17,6 +17,8 @@ import com.invest.execao.InvestimentoBusinessException;
 import com.invest.service.HTMLParserService;
 import com.invest.util.DataUtil;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
+
 @Service
 public class HTMLParserServiceImpl implements HTMLParserService {
 	private static final Logger logger = LoggerFactory.getLogger(HTMLParserServiceImpl.class);
@@ -122,8 +124,15 @@ public class HTMLParserServiceImpl implements HTMLParserService {
 		String urlPagina2 = "https://br.financas.yahoo.com/q/hp?s=" + papel.toUpperCase()
 				+ ".SA&d=9&e=31&f=2016&g=d&a=0&b=3&c=2000&z=66&y=66";
 
-		historicoCotacoes(urlPagina1, list);
-		historicoCotacoes(urlPagina2, list);
+		try {
+			historicoCotacoes(urlPagina1, list);
+			historicoCotacoes(urlPagina2, list);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			lerCotacaoAtual(papel);
+//			throw new InvestimentoBusinessException(e.getMessage());
+		}
 
 		return list;
 	}

@@ -23,6 +23,7 @@ import com.invest.entidade.rendaVariavel.Papel;
 import com.invest.execao.InvestimentoBusinessException;
 import com.invest.service.rendaVariavel.CotacaoService;
 import com.invest.service.rendaVariavel.dto.CotacaoGraficoDTO;
+import com.invest.service.rendaVariavel.dto.HistoricoCarteiraDTO;
 
 @RestController
 public class CotacaoRestController {
@@ -93,6 +94,24 @@ public class CotacaoRestController {
 		List<CotacaoGraficoDTO> result = null;
 		try {
 			result = cotacaoService.findCotacaoPorPapel(idPapel);
+		} catch (InvestimentoBusinessException e) {
+			ErrorResponse error = new ErrorResponse(e.getMessage());
+			return new ResponseEntity<ErrorResponse>(error, HttpStatus.BAD_REQUEST);
+		}
+
+		SuccessResponse success = new SuccessResponse("Operação realizada com sucesso", result);
+		return new ResponseEntity<SuccessResponse>(success, HttpStatus.OK);
+
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = UriConstInvestimento.URI_RECUPERAR_BALANCO_CARTEIRA)
+	@RolesAllowed({ RoleEnum.Constants.ROLE_ADMIN, RoleEnum.Constants.ROLE_CONVIDADO })
+	@ResponseBody
+	public ResponseEntity<?> recuperarBalancoCarteira() {
+		logger.info("CotacaoRestController.recuperarBalancoCarteira()");
+		List<HistoricoCarteiraDTO> result = null;
+		try {
+			result = cotacaoService.findLucroPrejuizo();
 		} catch (InvestimentoBusinessException e) {
 			ErrorResponse error = new ErrorResponse(e.getMessage());
 			return new ResponseEntity<ErrorResponse>(error, HttpStatus.BAD_REQUEST);

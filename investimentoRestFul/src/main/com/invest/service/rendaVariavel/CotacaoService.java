@@ -8,6 +8,7 @@ import com.invest.entidade.rendaVariavel.Papel;
 import com.invest.execao.InvestimentoBusinessException;
 import com.invest.service.rendaVariavel.dto.CotacaoGraficoDTO;
 import com.invest.service.rendaVariavel.dto.CotacaoTendenciaDTO;
+import com.invest.service.rendaVariavel.dto.HistoricoCarteiraDTO;
 
 public interface CotacaoService {
 
@@ -29,8 +30,10 @@ public interface CotacaoService {
 
 	List<CotacaoGraficoDTO> findCotacaoPorPapel(Integer idPapel) throws InvestimentoBusinessException;
 
-	Cotacao findUltimaCotacaoByPapel(Papel papel) throws InvestimentoBusinessException;
+	List<HistoricoCarteiraDTO> findLucroPrejuizo() throws InvestimentoBusinessException;
 
-	CotacaoTendenciaDTO getUltimoValorTendencia(Papel papel) throws InvestimentoBusinessException;;
+	Cotacao findUltimaCotacaoByPapel(Papel papel) throws InvestimentoBusinessException;;
+
+	CotacaoTendenciaDTO getUltimoValorTendencia(Papel papel) throws InvestimentoBusinessException;
 
 }

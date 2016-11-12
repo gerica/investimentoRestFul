@@ -49,51 +49,6 @@ public class OperacaoEntradaServiceImpl implements OperacaoEntradaService {
 	@Autowired
 	private UsuarioOperacaoService usuarioOperacaoService;
 
-	@Override
-	// @Transactional
-	public void salvar(OperacaoEntrada operacao) throws InvestimentoBusinessException {
-		logger.info("OperacaoEntradaServiceImpl.salvar()");
-
-		if (operacao.getQuantidade() == null || operacao.getQuantidade() == 0) {
-			throw new InvestimentoBusinessException("A quantidade é obrigatório.");
-		}
-
-		Papel papel = this.papelService.findById(operacao.getPapel().getId());
-		CotacaoTendenciaDTO cotacaoTendencia = this.cotacaoService.getUltimoValorTendencia(papel);
-		if (cotacaoTendencia != null) {
-			operacao.setStopLoss(cotacaoTendencia.getStop());
-		}
-		this.operacaoEntradaRepository.save(operacao);
-		Usuario usuario = authenticationService.get();
-		usuarioOperacaoService.salvar(operacao, usuario);
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.invest.service.rendaVariavel.impl.OperacaoEntradaService#inativar(
-	 * java.lang.Integer)
-	 */
-	@Override
-	public void inativar(Integer idOperacao) throws InvestimentoBusinessException {
-		OperacaoEntrada operacaoEntrada = this.operacaoEntradaRepository.findById(idOperacao);
-		operacaoEntrada.setAtivo(Boolean.valueOf(false));
-		salvar(operacaoEntrada);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.invest.service.rendaVariavel.impl.OperacaoEntradaService#
-	 * findAllOperacaoAtiva()
-	 */
-	@Override
-	public List<OperacaoEntrada> findAllOperacaoAtiva() {
-		return this.operacaoEntradaRepository.findAllByAtivoOrderByData(true);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -110,42 +65,13 @@ public class OperacaoEntradaServiceImpl implements OperacaoEntradaService {
 		}
 	}
 
-	private void avaliarEntradaCompra(OperacaoEntrada operacaoEntrada) throws InvestimentoBusinessException {
-		if ((operacaoEntrada.getAvaliacaoEntrada() != null)
-				&& (operacaoEntrada.getAvaliacaoEntrada().doubleValue() > 0.0D)) {
-			throw new InvestimentoBusinessException("A avalia��o j� foi realizada para esse papel. ");
-		}
-		Cotacao cotacao = this.cotacaoService.findByDataAndPapel(operacaoEntrada.getData(), operacaoEntrada.getPapel());
-		if (cotacao == null) {
-			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-			throw new InvestimentoBusinessException(
-					"N�o existe cota��o cadastrada para essa data. " + dateFormat.format(operacaoEntrada.getData()));
-		}
-		operacaoEntrada.setAvaliacaoEntrada(calcularAvaliacaoEntrada(cotacao, operacaoEntrada));
-		this.operacaoEntradaRepository.save(operacaoEntrada);
-	}
-
-	private Double calcularAvaliacaoEntrada(Cotacao cotacao, OperacaoEntrada operacaoEntrada) {
-		Double maxima = cotacao.getMaxima();
-		Double minima = cotacao.getMinima();
-		Double precoPago = Double.valueOf(operacaoEntrada.getPrecoUnitario().doubleValue());
-
-		Double qtdDia = Double.valueOf(maxima.doubleValue() - minima.doubleValue());
-		Double diferencaPaga = Double.valueOf(precoPago.doubleValue() - minima.doubleValue());
-
-		return Double.valueOf(diferencaPaga.doubleValue() * 100.0D / qtdDia.doubleValue());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.invest.service.rendaVariavel.impl.OperacaoEntradaService#findById(
-	 * java.lang.Integer)
-	 */
 	@Override
-	public OperacaoEntrada findById(Integer idOperacao) {
-		return this.operacaoEntradaRepository.findById(idOperacao);
+	public void excluir(OperacaoEntrada operacao) throws InvestimentoBusinessException {
+		validarExcluirOperacao(operacao);
+
+		this.usuarioOperacaoService.excluir(operacao);
+		this.operacaoEntradaRepository.delete(operacao.getId());
+
 	}
 
 	/*
@@ -182,12 +108,11 @@ public class OperacaoEntradaServiceImpl implements OperacaoEntradaService {
 	 * (non-Javadoc)
 	 * 
 	 * @see com.invest.service.rendaVariavel.impl.OperacaoEntradaService#
-	 * findByDataLessThanEqualAndDataGreaterThanEqual(java.util.Date,
-	 * java.util.Date)
+	 * findAllOperacaoAtiva()
 	 */
 	@Override
-	public List<OperacaoEntrada> findByDataLessThanEqualAndDataGreaterThanEqual(Date dataMaior, Date dataMenor) {
-		return this.operacaoEntradaRepository.findByDataLessThanEqualAndDataGreaterThanEqual(dataMaior, dataMenor);
+	public List<OperacaoEntrada> findAllOperacaoAtiva() {
+		return this.operacaoEntradaRepository.findAllByAtivoOrderByData(true);
 	}
 
 	/*
@@ -201,21 +126,67 @@ public class OperacaoEntradaServiceImpl implements OperacaoEntradaService {
 		return this.operacaoEntradaRepository.findByDataLessThanEqualAndAtivo(dataMaior, true);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.invest.service.rendaVariavel.impl.OperacaoEntradaService#
+	 * findByDataLessThanEqualAndDataGreaterThanEqual(java.util.Date,
+	 * java.util.Date)
+	 */
 	@Override
-	public void excluir(OperacaoEntrada operacao) throws InvestimentoBusinessException {
-		validarExcluirOperacao(operacao);
-
-		this.usuarioOperacaoService.excluir(operacao);
-		this.operacaoEntradaRepository.delete(operacao.getId());
-
+	public List<OperacaoEntrada> findByDataLessThanEqualAndDataGreaterThanEqual(Date dataMaior, Date dataMenor) {
+		return this.operacaoEntradaRepository.findByDataLessThanEqualAndDataGreaterThanEqual(dataMaior, dataMenor);
 	}
 
-	private void validarExcluirOperacao(OperacaoEntrada operacao) throws InvestimentoBusinessException {
-		List<OperacaoSaida> lista = operacaoSaidaService.findByOperacaoEntrada(operacao);
-		if (lista.size() > 0) {
-			throw new InvestimentoBusinessException(
-					"Não é possível excluir operação de entrada, pois essa operação possui operação de saída");
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.invest.service.rendaVariavel.impl.OperacaoEntradaService#findById(
+	 * java.lang.Integer)
+	 */
+	@Override
+	public OperacaoEntrada findById(Integer idOperacao) {
+		return this.operacaoEntradaRepository.findById(idOperacao);
+	}
+
+	@Override
+	public List<OperacaoEntrada> findByData(Date data) {
+		return this.operacaoEntradaRepository.findByData(data);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.invest.service.rendaVariavel.impl.OperacaoEntradaService#inativar(
+	 * java.lang.Integer)
+	 */
+	@Override
+	public void inativar(Integer idOperacao) throws InvestimentoBusinessException {
+		OperacaoEntrada operacaoEntrada = this.operacaoEntradaRepository.findById(idOperacao);
+		operacaoEntrada.setAtivo(Boolean.valueOf(false));
+		salvar(operacaoEntrada);
+	}
+
+	@Override
+	// @Transactional
+	public void salvar(OperacaoEntrada operacao) throws InvestimentoBusinessException {
+		logger.info("OperacaoEntradaServiceImpl.salvar()");
+
+		if (operacao.getQuantidade() == null || operacao.getQuantidade() == 0) {
+			throw new InvestimentoBusinessException("A quantidade é obrigatório.");
 		}
+
+		Papel papel = this.papelService.findById(operacao.getPapel().getId());
+		CotacaoTendenciaDTO cotacaoTendencia = this.cotacaoService.getUltimoValorTendencia(papel);
+		if (cotacaoTendencia != null) {
+			operacao.setStopLoss(cotacaoTendencia.getStop());
+		}
+		this.operacaoEntradaRepository.save(operacao);
+		Usuario usuario = authenticationService.get();
+		usuarioOperacaoService.salvar(operacao, usuario);
+
 	}
 
 	@Override
@@ -226,5 +197,39 @@ public class OperacaoEntradaServiceImpl implements OperacaoEntradaService {
 			throw new InvestimentoBusinessException("Não existe nenhuma operação para ser salva.");
 		}
 
+	}
+
+	private void avaliarEntradaCompra(OperacaoEntrada operacaoEntrada) throws InvestimentoBusinessException {
+		if ((operacaoEntrada.getAvaliacaoEntrada() != null)
+				&& (operacaoEntrada.getAvaliacaoEntrada().doubleValue() > 0.0D)) {
+			throw new InvestimentoBusinessException("A avalia��o j� foi realizada para esse papel. ");
+		}
+		Cotacao cotacao = this.cotacaoService.findByDataAndPapel(operacaoEntrada.getData(), operacaoEntrada.getPapel());
+		if (cotacao == null) {
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+			throw new InvestimentoBusinessException(
+					"N�o existe cota��o cadastrada para essa data. " + dateFormat.format(operacaoEntrada.getData()));
+		}
+		operacaoEntrada.setAvaliacaoEntrada(calcularAvaliacaoEntrada(cotacao, operacaoEntrada));
+		this.operacaoEntradaRepository.save(operacaoEntrada);
+	}
+
+	private Double calcularAvaliacaoEntrada(Cotacao cotacao, OperacaoEntrada operacaoEntrada) {
+		Double maxima = cotacao.getMaxima();
+		Double minima = cotacao.getMinima();
+		Double precoPago = Double.valueOf(operacaoEntrada.getPrecoUnitario().doubleValue());
+
+		Double qtdDia = Double.valueOf(maxima.doubleValue() - minima.doubleValue());
+		Double diferencaPaga = Double.valueOf(precoPago.doubleValue() - minima.doubleValue());
+
+		return Double.valueOf(diferencaPaga.doubleValue() * 100.0D / qtdDia.doubleValue());
+	}
+
+	private void validarExcluirOperacao(OperacaoEntrada operacao) throws InvestimentoBusinessException {
+		List<OperacaoSaida> lista = operacaoSaidaService.findByOperacaoEntrada(operacao);
+		if (lista.size() > 0) {
+			throw new InvestimentoBusinessException(
+					"Não é possível excluir operação de entrada, pois essa operação possui operação de saída");
+		}
 	}
 }

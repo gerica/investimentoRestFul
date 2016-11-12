@@ -14,8 +14,15 @@ public abstract interface OperacaoEntradaRepository extends CrudRepository<Opera
 
 	public abstract List<OperacaoEntrada> findAllByAtivoOrderByData(boolean paramBoolean);
 
-	public abstract List<OperacaoEntrada> findByDataLessThanEqualAndDataGreaterThanEqual(Date paramDate1, Date paramDate2);
+	public abstract List<OperacaoEntrada> findByDataLessThanEqualAndDataGreaterThanEqual(Date paramDate1,
+			Date paramDate2);
 
 	public abstract List<OperacaoEntrada> findByDataLessThanEqualAndAtivo(Date paramDate, boolean paramBoolean);
+
+	// @Query("SELECT oe FROM OperacaoEntrada oe WHERE oe.ativo = true and
+	// oe.quantidade > 0")
+	public abstract List<OperacaoEntrada> findByDataGreaterThan(Date data);
 	
+	public abstract List<OperacaoEntrada> findByData(Date data);
+
 }
