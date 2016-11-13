@@ -131,7 +131,7 @@ public class HTMLParserServiceImpl implements HTMLParserService {
 		} catch (Exception e) {
 			e.printStackTrace();
 			lerCotacaoAtual(papel);
-//			throw new InvestimentoBusinessException(e.getMessage());
+			// throw new InvestimentoBusinessException(e.getMessage());
 		}
 
 		return list;
@@ -160,8 +160,7 @@ public class HTMLParserServiceImpl implements HTMLParserService {
 						cotacao.setMinima(Double.valueOf(Double.parseDouble(rowItems.get(3).text().replace(',', '.'))));
 						cotacao.setFechamento(
 								Double.valueOf(Double.parseDouble(rowItems.get(4).text().replace(',', '.'))));
-
-						System.out.println(cotacao);
+						// System.out.println(cotacao);
 
 						list.add(cotacao);
 

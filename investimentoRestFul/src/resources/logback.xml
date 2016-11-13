@@ -41,7 +41,7 @@
 	</appender>
 
 	<logger name="org.codingpedia" additivity="false">
-		<level value="DEBUG" />
+		<level value="INFO" />
 		<appender-ref ref="dailyRollingFileAppender" />
 		<appender-ref ref="minuteRollingFileAppender" />
 		<appender-ref ref="consoleAppender" />

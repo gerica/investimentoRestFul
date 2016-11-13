@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.invest.entidade.rendaVariavel.ConfiguracaoAnaliseCotacoes;
 import com.invest.entidade.rendaVariavel.Cotacao;
 import com.invest.entidade.rendaVariavel.OperacaoEntrada;
+import com.invest.entidade.rendaVariavel.OperacaoSaida;
 import com.invest.entidade.rendaVariavel.Papel;
 import com.invest.execao.InvestimentoBusinessException;
 import com.invest.repository.rendaVariavel.CotacaoRepository;
@@ -401,36 +402,50 @@ public class CotacaoServiceImpl implements CotacaoService {
 			c.set(Calendar.MILLISECOND, 0);
 
 			operacoesEntrada.addAll(operacaoEntradaService.findByData(c.getTime()));
+			double totalInvestido = 0.0;
+			double totalInvestidoRefHoje = 0.0;
+			boolean adicionar = false;
+			int quantidade = 0;
 
 			for (OperacaoEntrada operacaoEntrada : operacoesEntrada) {
 
 				cotacoes = cotacaoRepository.findByPapelAndData(operacaoEntrada.getPapel(), c.getTime());
 				if (cotacoes.size() > 0) {
+					adicionar = true;
+					quantidade = operacaoEntrada.getQuantidade();
+
+					List<OperacaoSaida> saidas = operacaoSaidaService.findByOperacaoEntrada(operacaoEntrada);
+					for (OperacaoSaida operacaoSaida : saidas) {
+						quantidade += operacaoSaida.getQuantidade();
+					}
+
 					Cotacao cotacao = cotacoes.get(0);
-					
+
 					if (dto == null || !dto.getData().equals(c.getTime())) {
 						dto = new HistoricoCarteiraDTO();
 						dto.setData(c.getTime());
 					}
-					
-//						lucroPrejuiso += calcularLucroPrejuizo(operacaoEntrada, cotacao);
-						dto.setLucroPrejuizo(dto.getLucroPrejuizo() + calcularLucroPrejuizo(operacaoEntrada, cotacao));
-					
+					totalInvestido += operacaoEntrada.getPrecoUnitario() * quantidade;
+					totalInvestidoRefHoje += cotacao.getFechamento() * quantidade;
 
-//					dto.setLucroPrejuizo(dto.getLucroPrejuizo() + lucroPrejuiso);
-					result.add(dto);
 				}
 
+			}
+
+			if (adicionar) {
+				dto.setLucroPrejuizo(
+						dto.getLucroPrejuizo() + calcularLucroPrejuizo(totalInvestido, totalInvestidoRefHoje));
+				result.add(dto);
 			}
 		}
 
 		return result;
 	}
 
-	private Double calcularLucroPrejuizo(OperacaoEntrada operacaoEntrada, Cotacao cotacao) {
-		double diferenca = cotacao.getFechamento() - operacaoEntrada.getPrecoUnitario();
+	private Double calcularLucroPrejuizo(double totalInvestido, double totalInvestidoRefHoje) {
+		double diferenca = totalInvestidoRefHoje - totalInvestido;
 
-		return (diferenca * 100) / operacaoEntrada.getPrecoUnitario();
+		return (diferenca * 100) / totalInvestido;
 	}
 
 	@Override
