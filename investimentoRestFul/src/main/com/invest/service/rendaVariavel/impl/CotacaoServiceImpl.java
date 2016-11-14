@@ -28,6 +28,7 @@ import com.invest.service.rendaVariavel.PapelService;
 import com.invest.service.rendaVariavel.dto.CotacaoGraficoDTO;
 import com.invest.service.rendaVariavel.dto.CotacaoTendenciaDTO;
 import com.invest.service.rendaVariavel.dto.HistoricoCarteiraDTO;
+import com.invest.util.DataUtil;
 
 @Service
 public class CotacaoServiceImpl implements CotacaoService {
@@ -491,4 +492,5 @@ public class CotacaoServiceImpl implements CotacaoService {
 		// dateFormat.format(cotacao.getData()));
 		// }
 	}
+
 }

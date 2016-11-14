@@ -2,16 +2,14 @@ package com.invest.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
-import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
-
-import ch.qos.logback.core.net.SyslogOutputStream;
 
 public class DataUtil {
 	public static final String PATTERN_DATA_1 = "dd MMM yyyy hh:mm:ss";
@@ -75,15 +73,12 @@ public class DataUtil {
 		// System.out.println(parseToDateTransformeString(dt6));
 		// System.out.println(parseToDateTransformeString(dt7));
 
-		
 		LocalDate ld = new LocalDate();
-		
-		
+
 		System.out.println(ld);
 		ld.minusDays(10);
 		System.out.println(ld);
-		
-		
+
 	}
 
 	public static Date parseToDate(String stringDate) {
@@ -200,5 +195,15 @@ public class DataUtil {
 			data = DateTime.parse(dataString.substring(0, 10), DateTimeFormat.forPattern("dd/MM/yyyy"));
 		}
 		return data.toDate();
+	}
+
+	public static boolean finalSemana(Date data) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(data);
+
+		if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
+			return true;
+		}
+		return false;
 	}
 }

@@ -2,6 +2,7 @@ package com.invest.service.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.jsoup.Jsoup;
@@ -160,7 +161,6 @@ public class HTMLParserServiceImpl implements HTMLParserService {
 						cotacao.setMinima(Double.valueOf(Double.parseDouble(rowItems.get(3).text().replace(',', '.'))));
 						cotacao.setFechamento(
 								Double.valueOf(Double.parseDouble(rowItems.get(4).text().replace(',', '.'))));
-						// System.out.println(cotacao);
 
 						list.add(cotacao);
 
@@ -187,8 +187,11 @@ public class HTMLParserServiceImpl implements HTMLParserService {
 
 			// Data
 			Elements dataCotacao = doc.select("span.time_rtq");
-			System.out.println(dataCotacao.text());
 			cotacao.setData(DataUtil.parseToDateTransformeString(dataCotacao.text()));
+			// Não atualizará quando for final de semana
+			if (DataUtil.finalSemana(cotacao.getData())) {
+				return null;
+			}
 
 			// fechamento
 			Elements spanFechamento = doc.select("span.time_rtq_ticker");
@@ -212,7 +215,6 @@ public class HTMLParserServiceImpl implements HTMLParserService {
 		} catch (IOException e) {
 			throw new InvestimentoBusinessException(e.getMessage());
 		}
-		System.out.println(cotacao);
 		return cotacao;
 	}
 
